@@ -1,11 +1,16 @@
-const controllercompany = require('../controller/company/controller.company')
-const controllerincident = require('../controller/incident/controller.incident')
+const controllerCompany = require('../controller/company/controller.company')
+const controllerIncident = require('../controller/incident/controller.incident')
+const controllerArea = require('../controller/area/controller.area')
+const controllerJetson = require('../controller/jetson/controller.jetson')
+const controllerUser = require('../controller/user/controller.user')
 
 
 const router = (app) => {
-  app.use('/company', controllercompany)
-  app.use('/company', controllerincident)
-
+  app.use('/company', controllerCompany)
+  app.use('/company', controllerIncident)
+  app.use('/company', controllerArea)
+  app.use('/company', controllerJetson)
+  app.use('/company', controllerUser)
 }
 
 module.exports = router

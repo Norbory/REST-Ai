@@ -1,92 +1,96 @@
 const Company = require('../models/Company.model');
 
-class AreaDAO {
-  async getAreasByCompanyId(companyId) {
+class JetsonDAO {
+  async getJetsonsByCompanyId(companyId) {
     try {
       const company = await Company.findById(companyId);
-      return company ? company.areas : [];
+      return company ? company.jetson : [];
     } catch (error) {
       throw error;
     }
   }
 
-  async getAreaById(companyId, areaId) {
+  async getJetsonById(companyId, jetsonId) {
     try {
       const company = await Company.findById(companyId);
       if (!company) {
         throw new Error('Compañía no encontrada');
       }
 
-      const area = company.areas.find(area => area._id.toString() === areaId);
-      if (!area) {
-        throw new Error('Área no encontrada');
+      const jetson = company.jetson.find(jetson => jetson._id.toString() === jetsonId);
+      if (!jetson) {
+        throw new Error('Jetson no encontrado');
       }
 
-      return area;
+      return jetson;
     } catch (error) {
       throw error;
     }
   }
 
-  async addArea(companyId, areaData) {
+  async addJetson(companyId, jetsonData) {
     try {
       const company = await Company.findById(companyId);
       if (!company) {
         throw new Error('Compañía no encontrada');
       }
 
-      const newArea = {
-        ID_area: areaData.ID_area, // Asegúrate de proporcionar un ID único
-        Name: areaData.Name
+      const newJetson = {
+        ID_Company: jetsonData.ID_Company,
+        ID_Area: jetsonData.ID_Area,
+        ID_Cam: jetsonData.ID_Cam
       };
 
-      company.areas.push(newArea);
+      company.jetson.push(newJetson);
       const savedCompany = await company.save();
-      return newArea;
+      return newJetson;
     } catch (error) {
       throw error;
     }
   }
 
-  async updateArea(companyId, areaId, newData) {
+  async updateJetson(companyId, jetsonId, newData) {
     try {
       const company = await Company.findById(companyId);
       if (!company) {
         throw new Error('Compañía no encontrada');
       }
 
-      const area = company.areas.find(area => area._id.toString() === areaId);
-      if (!area) {
-        throw new Error('Área no encontrada');
+      const jetson = company.jetson.find(jetson => jetson._id.toString() === jetsonId);
+      if (!jetson) {
+        throw new Error('Jetson no encontrado');
       }
 
-      area.Name = newData.Name;
+      jetson.ID_Company = newData.ID_Company;
+      jetson.ID_Area = newData.ID_Area;
+      jetson.ID_Cam = newData.ID_Cam;
+
       await company.save();
-      return area;
+      return jetson;
     } catch (error) {
       throw error;
     }
   }
 
-  static async deleteArea(companyId, areaId) {
+  async deleteJetson(companyId, jetsonId) {
     try {
       const company = await Company.findById(companyId);
       if (!company) {
         throw new Error('Compañía no encontrada');
       }
 
-      const areaIndex = company.areas.findIndex(area => area._id.toString() === areaId);
-      if (areaIndex === -1) {
-        throw new Error('Área no encontrada');
+      const jetsonIndex = company.jetson.findIndex(jetson => jetson._id.toString() === jetsonId);
+      if (jetsonIndex === -1) {
+        throw new Error('Jetson no encontrado');
       }
 
-      const deletedArea = company.areas.splice(areaIndex, 1);
+      const deletedJetson = company.jetson.splice(jetsonIndex, 1);
       await company.save();
-      return deletedArea[0];
+      return deletedJetson[0];
     } catch (error) {
       throw error;
     }
   }
 }
 
-module.exports = AreaDAO;
+module.exports = JetsonDAO;

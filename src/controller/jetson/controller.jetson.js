@@ -1,40 +1,65 @@
 const express = require('express');
 const router = express.Router();
-const IncidentDAO = require('../../dao/class/dao.incident');
+const JetsonDAO = require('../../dao/class/dao.jetson');
 
-const Incident = new IncidentDAO;
-
-// Obtener todos los incidentes de una compañía
-router.get('/:companyId/incidents', async (req, res) => {
+// Obtener todas las Jetsons de una compañía
+router.get('/:companyId/jetsons', async (req, res) => {
   const companyId = req.params.companyId;
   try {
-    const incidents = await Incident.getIncidentsByCompanyId(companyId);
-    res.json(incidents);
+    const jetsons = await JetsonDAO.getJetsonsByCompanyId(companyId);
+    res.json(jetsons);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-// Agregar un nuevo incidente a una compañía
-router.post('/:companyId/incidents', async (req, res) => {
+// Obtener una Jetson por su ID
+router.get('/:companyId/jetsons/:jetsonId', async (req, res) => {
   const companyId = req.params.companyId;
-  const incidentData = req.body;
+  const jetsonId = req.params.jetsonId;
   try {
-    const newIncident = await Incident.addIncident(companyId, incidentData);
-    res.json(newIncident);
+    const jetson = await JetsonDAO.getJetsonById(companyId, jetsonId);
+    res.json(jetson);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-// Actualizar un incidente existente
-router.put('/:companyId/incidents/:incidentId', async (req, res) => {
+// Agregar una nueva Jetson a una compañía
+router.post('/:companyId/jetsons', async (req, res) => {
   const companyId = req.params.companyId;
-  const incidentId = req.params.incidentId;
+  const jetsonData = req.body;
+
+  try {
+    const newJetson = await JetsonDAO.addJetson(companyId, jetsonData);
+    res.status(201).json(newJetson);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Actualizar una Jetson existente
+router.put('/:companyId/jetsons/:jetsonId', async (req, res) => {
+  const companyId = req.params.companyId;
+  const jetsonId = req.params.jetsonId;
   const newData = req.body;
+
   try {
-    const updatedIncident = await Incident.updateIncident(companyId, incidentId, newData);
-    res.json(updatedIncident);
+    const updatedJetson = await JetsonDAO.updateJetson(companyId, jetsonId, newData);
+    res.json(updatedJetson);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Eliminar una Jetson por su ID
+router.delete('/:companyId/jetsons/:jetsonId', async (req, res) => {
+  const companyId = req.params.companyId;
+  const jetsonId = req.params.jetsonId;
+
+  try {
+    const deletedJetson = await JetsonDAO.deleteJetson(companyId, jetsonId);
+    res.json(deletedJetson);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
