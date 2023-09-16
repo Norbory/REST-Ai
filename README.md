@@ -92,5 +92,3 @@ Para cualquier consulta o comentario, por favor contáctanos a través de [corre
 Agradecemos a todas las personas que han contribuido y apoyado en el desarrollo de esta API.
 
 ---
-
-*(Nota: Este es solo un ejemplo y deberías adaptarlo según los detalles específicos de tu proyecto. Asegúrate de proporcionar información precisa y relevante sobre tu API y proyecto.)*
