@@ -8,5 +8,4 @@ const config ={
     CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET
 }
 
-
 module.exports = config

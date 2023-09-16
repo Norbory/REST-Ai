@@ -1,7 +1,7 @@
 const Company = require('../models/Company.model');
 
 class IncidentDAO {
-  static async getIncidentsByCompanyId(companyId) {
+  async getIncidentsByCompanyId(companyId) {
     try {
       const company = await Company.findById(companyId);
       return company.incidents;
@@ -10,7 +10,7 @@ class IncidentDAO {
     }
   }
 
-  static async addIncident(companyId, incidentData) {
+  async addIncident(companyId, incidentData) {
     try {
       const company = await Company.findById(companyId);
       company.incidents.push(incidentData);
@@ -21,7 +21,7 @@ class IncidentDAO {
     }
   }
 
-  static async updateIncident(companyId, incidentId, newData) {
+  async updateIncident(companyId, incidentId, newData) {
     try {
       const company = await Company.findById(companyId);
       const incident = company.incidents.id(incidentId);

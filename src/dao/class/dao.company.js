@@ -1,7 +1,7 @@
 const Company = require('../models/Company.model');
 
 class CompanyDAO {
-  static async getAllCompanies() {
+  async getAllCompanies() {
     try {
       const companies = await Company.find();
       return companies;
@@ -10,7 +10,7 @@ class CompanyDAO {
     }
   }
 
-  static async getCompanyById(id) {
+  async getCompanyById(id) {
     try {
       const company = await Company.findById(id);
       return company;
@@ -19,7 +19,7 @@ class CompanyDAO {
     }
   }
 
-  static async createCompany(companyData) {
+  async createCompany(companyData) {
     try {
       const newCompany = new Company(companyData);
       const savedCompany = await newCompany.save();
@@ -29,7 +29,7 @@ class CompanyDAO {
     }
   }
 
-  static async updateCompany(id, newData) {
+  async updateCompany(id, newData) {
     try {
       const updatedCompany = await Company.findByIdAndUpdate(id, newData, { new: true });
       return updatedCompany;
@@ -38,7 +38,7 @@ class CompanyDAO {
     }
   }
 
-  static async deleteCompany(id) {
+  async deleteCompany(id) {
     try {
       const deletedCompany = await Company.findByIdAndDelete(id);
       return deletedCompany;

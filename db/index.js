@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 
 const mongoConnect = async () => {
     try {
+      console.log('mongoDB: ', mongoDB)
       await mongoose.connect(
         mongoDB
       )

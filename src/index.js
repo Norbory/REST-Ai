@@ -1,7 +1,7 @@
 
 const express = require('express')
 const morgan = require('morgan')
-const router = require('./routes')
+const router = require('./router')
 const mongoConnect = require('../db/index.js')
 
 const app = express()
