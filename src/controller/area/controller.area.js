@@ -3,11 +3,13 @@ const router = express.Router();
 
 const AreaDAO = require('../../dao/class/dao.area');
 
+const Area = new AreaDAO
+
 // Obtener todas las áreas de una compañía
 router.get('/:companyId/areas', async (req, res) => {
   const companyId = req.params.companyId;
   try {
-    const areas = await AreaDAO.getAreasByCompanyId(companyId);
+    const areas = await Area.getAreasByCompanyId(companyId);
     res.json(areas);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -19,7 +21,7 @@ router.get('/:companyId/areas/:areaId', async (req, res) => {
   const companyId = req.params.companyId;
   const areaId = req.params.areaId;
   try {
-    const area = await AreaDAO.getAreaById(companyId, areaId);
+    const area = await Area.getAreaById(companyId, areaId);
     res.json(area);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -32,7 +34,7 @@ router.post('/:companyId/areas', async (req, res) => {
   const areaData = req.body;
 
   try {
-    const newArea = await AreaDAO.addArea(companyId, areaData);
+    const newArea = await Area.addArea(companyId, areaData);
     res.status(201).json(newArea);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -46,7 +48,7 @@ router.put('/:companyId/areas/:areaId', async (req, res) => {
   const newData = req.body;
 
   try {
-    const updatedArea = await AreaDAO.updateArea(companyId, areaId, newData);
+    const updatedArea = await Area.updateArea(companyId, areaId, newData);
     res.json(updatedArea);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -59,7 +61,7 @@ router.delete('/:companyId/areas/:areaId', async (req, res) => {
   const areaId = req.params.areaId;
 
   try {
-    const deletedArea = await AreaDAO.deleteArea(companyId, areaId);
+    const deletedArea = await Area.deleteArea(companyId, areaId);
     res.json(deletedArea);
   } catch (error) {
     res.status(500).json({ message: error.message });

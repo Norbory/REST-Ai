@@ -2,11 +2,13 @@ const express = require('express');
 const router = express.Router();
 const UserDAO = require('../../dao/class/dao.users');
 
+const user = new UserDAO;
+
 // Obtener todos los usuarios de una compañía
 router.get('/:companyId/users', async (req, res) => {
   const companyId = req.params.companyId;
   try {
-    const users = await UserDAO.getUsersByCompanyId(companyId);
+    const users = await user.getUsersByCompanyId(companyId);
     res.json(users);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -18,7 +20,7 @@ router.get('/:companyId/users/:userId', async (req, res) => {
   const companyId = req.params.companyId;
   const userId = req.params.userId;
   try {
-    const user = await UserDAO.getUserById(companyId, userId);
+    const user = await user.getUserById(companyId, userId);
     res.json(user);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -31,7 +33,7 @@ router.post('/:companyId/users', async (req, res) => {
   const userData = req.body;
 
   try {
-    const newUser = await UserDAO.addUser(companyId, userData);
+    const newUser = await user.addUser(companyId, userData);
     res.status(201).json(newUser);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -45,7 +47,7 @@ router.put('/:companyId/users/:userId', async (req, res) => {
   const newData = req.body;
 
   try {
-    const updatedUser = await UserDAO.updateUser(companyId, userId, newData);
+    const updatedUser = await user.updateUser(companyId, userId, newData);
     res.json(updatedUser);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -58,7 +60,7 @@ router.delete('/:companyId/users/:userId', async (req, res) => {
   const userId = req.params.userId;
 
   try {
-    const deletedUser = await UserDAO.deleteUser(companyId, userId);
+    const deletedUser = await user.deleteUser(companyId, userId);
     res.json(deletedUser);
   } catch (error) {
     res.status(500).json({ message: error.message });
