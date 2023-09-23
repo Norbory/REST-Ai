@@ -2,13 +2,13 @@ const express = require('express');
 const router = express.Router();
 const JetsonDAO = require('../../dao/class/dao.jetson');
 
-const jetson= new JetsonDAO
+const Jetson= new JetsonDAO
 
 // Obtener todas las Jetsons de una compañía
 router.get('/:companyId/jetsons', async (req, res) => {
   const companyId = req.params.companyId;
   try {
-    const jetsons = await jetson.getJetsonsByCompanyId(companyId);
+    const jetsons = await Jetson.getJetsonsByCompanyId(companyId);
     res.json(jetsons);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -20,7 +20,7 @@ router.get('/:companyId/jetsons/:jetsonId', async (req, res) => {
   const companyId = req.params.companyId;
   const jetsonId = req.params.jetsonId;
   try {
-    const jetson = await jetson.getJetsonById(companyId, jetsonId);
+    const jetson = await Jetson.getJetsonById(companyId, jetsonId);
     res.json(jetson);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -33,7 +33,7 @@ router.post('/:companyId/jetsons', async (req, res) => {
   const jetsonData = req.body;
 
   try {
-    const newJetson = await jetson.addJetson(companyId, jetsonData);
+    const newJetson = await Jetson.addJetson(companyId, jetsonData);
     res.status(201).json(newJetson);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -47,7 +47,7 @@ router.put('/:companyId/jetsons/:jetsonId', async (req, res) => {
   const newData = req.body;
 
   try {
-    const updatedJetson = await jetson.updateJetson(companyId, jetsonId, newData);
+    const updatedJetson = await Jetson.updateJetson(companyId, jetsonId, newData);
     res.json(updatedJetson);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -60,7 +60,7 @@ router.delete('/:companyId/jetsons/:jetsonId', async (req, res) => {
   const jetsonId = req.params.jetsonId;
 
   try {
-    const deletedJetson = await jetson.deleteJetson(companyId, jetsonId);
+    const deletedJetson = await Jetson.deleteJetson(companyId, jetsonId);
     res.json(deletedJetson);
   } catch (error) {
     res.status(500).json({ message: error.message });

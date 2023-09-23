@@ -36,13 +36,12 @@ class AreaDAO {
       }
 
       const newArea = {
-        ID_area: areaData.ID_area, // Asegúrate de proporcionar un ID único
         Name: areaData.Name
       };
 
       company.areas.push(newArea);
       const savedCompany = await company.save();
-      return newArea;
+      return savedCompany.areas[savedCompany.areas.length - 1];
     } catch (error) {
       throw error;
     }
@@ -68,7 +67,7 @@ class AreaDAO {
     }
   }
 
-  static async deleteArea(companyId, areaId) {
+  async deleteArea(companyId, areaId) {
     try {
       const company = await Company.findById(companyId);
       if (!company) {

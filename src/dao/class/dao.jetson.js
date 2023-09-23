@@ -36,14 +36,12 @@ class JetsonDAO {
       }
 
       const newJetson = {
-        ID_Company: jetsonData.ID_Company,
         ID_Area: jetsonData.ID_Area,
-        ID_Cam: jetsonData.ID_Cam
       };
 
       company.jetson.push(newJetson);
       const savedCompany = await company.save();
-      return newJetson;
+      return savedCompany.jetson[savedCompany.jetson.length - 1];
     } catch (error) {
       throw error;
     }

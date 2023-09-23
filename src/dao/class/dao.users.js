@@ -36,16 +36,14 @@ class UserDAO {
       }
 
       const newUser = {
-        ID_Company: userData.ID_Company,
-        ID_Area: userData.ID_Area,
-        ID_Cam: userData.ID_Cam,
         role: userData.role,
-        Name: userData.Name
+        Name: userData.Name,
+        telegramID: userData.telegramID,
       };
 
       company.users.push(newUser);
       const savedCompany = await company.save();
-      return newUser;
+      return savedCompany.users[savedCompany.users.length - 1];
     } catch (error) {
       throw error;
     }
@@ -63,9 +61,6 @@ class UserDAO {
         throw new Error('Usuario no encontrado');
       }
 
-      user.ID_Company = newData.ID_Company;
-      user.ID_Area = newData.ID_Area;
-      user.ID_Cam = newData.ID_Cam;
       user.role = newData.role;
       user.Name = newData.Name;
 
