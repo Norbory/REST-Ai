@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+
 const areaSchema = new mongoose.Schema({
   Name: {type:String, required: true},
 });

@@ -46,6 +46,20 @@ class CompanyDAO {
       throw error;
     }
   }
+
+  async getCompanyByTelegramID(telegramID) {
+    try {
+      const company = await Company.findOne({ 'users.telegramID': telegramID });
+
+      if (!company) throw new Error('Company not found');
+      return company;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+
+
 }
 
 module.exports = CompanyDAO;

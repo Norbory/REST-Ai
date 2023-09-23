@@ -61,4 +61,18 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+
+router.get('/telegram/:telegramID', async (req, res) => {
+  const telegramID = req.params.telegramID;
+  try {
+    const company = await Company.getCompanyByTelegramID(telegramID);
+    res.json(company);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+
+
 module.exports = router;

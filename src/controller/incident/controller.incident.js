@@ -40,4 +40,41 @@ router.put('/:companyId/incidents/:incidentId', async (req, res) => {
   }
 });
 
+// Endpoint para obtener el resumen de incidentes del día
+router.get('/:companyId/incidents/summary', async (req, res) => {
+  const companyId = req.params.companyId;
+
+  try {
+    // Obtener la fecha actual en el huso horario de Lima (UTC-5)
+    const limaTimezone = 'America/Lima';
+    const currentDate = new Date(new Date().toLocaleString('en-US', { timeZone: limaTimezone }));
+
+    // Obtener todos los incidentes del día para la compañía específica
+    const incidents = await Incident.getIncidentsByCompanyIdAndDate(companyId,currentDate);
+
+    // Calcular el resumen
+    const summary = {
+      Detections: incidents.length,
+      IncompleteEPPs: incidents.reduce((total, incident) => total + incident.EPPs.length, 0),
+      Reports: incidents.filter(incident => incident.Reported).length
+    };
+
+    res.json({ summary });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+router.get('/:companyId/incidents/statistics', async (req, res) => {
+  try {
+    const weeklyStats = await Incident.getWeeklyStatistics();
+    const monthlyStats = await Incident.getMonthlyStatistics();
+    res.json({ weeklyStats, monthlyStats });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
 module.exports = router;
