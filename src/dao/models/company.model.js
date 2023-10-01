@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema({
 const incidentSchema = new mongoose.Schema({
   ID_area: {type:mongoose.Schema.Types.ObjectId, required: true},
   ID_Cam: {type: mongoose.Schema.Types.ObjectId, required: true},
+  areaName: {type: String, required: false},
   date: {
     type: Date,
     default: () => new Date(new Date().toLocaleString("en-US", { timeZone: "America/Lima" }))
@@ -59,7 +60,26 @@ const companySchema = new mongoose.Schema({
   }
 });
 
+incidentSchema.pre('save', async function(next) {
+  try {
+    const area = await mongoose.model('Company').findOne({
+      'areas._id': this.ID_area
+    }, {
+      'areas.$': 1
+    });
+
+    if (area) {
+      this.areaName = area.areas[0].Name;
+    }
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
 
 const Company = mongoose.model('Company', companySchema);
+
 
 module.exports = Company;
