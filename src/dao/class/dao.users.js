@@ -90,6 +90,26 @@ class UserDAO {
       throw error;
     }
   }
+
+  async getUserByUsername(username) {
+    try {
+      const companies = await Company.find({ "users.Name": username });
+      const user = companies.flatMap(company => company.users.find(user => user.Name === username));
+      return user;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getUserById(userId) {
+    try {
+      const companies = await Company.find({ "users._id": userId });
+      const user = companies.flatMap(company => company.users.find(user => user._id.toString() === userId));
+      return user;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 module.exports = UserDAO;
