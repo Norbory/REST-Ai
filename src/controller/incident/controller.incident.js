@@ -1,8 +1,15 @@
 const express = require('express');
 const router = express.Router();
+const cloudinary = require('cloudinary').v2;
 const IncidentDAO = require('../../dao/class/dao.incident');
 
 const Incident = new IncidentDAO;
+
+cloudinary.config({
+  cloud_name: 'dmbtlv0hg',
+  api_key: '381815326731569',
+  api_secret: 'yBoghdZkYzBETXFy5Dlt9VgWnP8',
+});
 
 // Obtener todos los incidentes de una compañía
 router.get('/:companyId/incidents', async (req, res) => {
@@ -17,9 +24,18 @@ router.get('/:companyId/incidents', async (req, res) => {
 
 // Agregar un nuevo incidente a una compañía
 router.post('/:companyId/incidents', async (req, res) => {
+  let url =[];
   const companyId = req.params.companyId;
   const incidentData = req.body;
-  try {
+  if( 1) {
+    const result = await cloudinary.uploader.upload(
+      `data:image/png;base64,${incidentData.imageUrls[0]}`
+    );
+    url[0] = result.secure_url;
+    console.log("URL de imagen subida a Cloudinary:", result.secure_url);
+    incidentData.imageUrls = url;
+  }
+  try { 
     const newIncident = await Incident.addIncident(companyId, incidentData);
     res.json(newIncident);
   } catch (error) {
