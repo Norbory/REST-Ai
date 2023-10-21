@@ -1,6 +1,4 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-
 
 const areaSchema = new mongoose.Schema({
   Name: {type:String, required: true},
