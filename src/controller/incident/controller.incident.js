@@ -27,7 +27,7 @@ router.post('/:companyId/incidents', async (req, res) => {
   let url =[];
   const companyId = req.params.companyId;
   const incidentData = req.body;
-  if( 1) {
+  if( incidentData) {
     const result = await cloudinary.uploader.upload(
       `data:image/png;base64,${incidentData.imageUrls[0]}`
     );
