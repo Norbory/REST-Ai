@@ -44,7 +44,8 @@ class UserDAO {
         telegramID: userData.telegramID,
         email: userData.email,
         username: userData.username,
-        password: createHash(userData.password)
+        password: createHash(userData.password),
+        DNI: userData.DNI,
       };
 
       company.users.push(newUser);

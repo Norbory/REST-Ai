@@ -63,6 +63,7 @@ const userSchema = new mongoose.Schema({
   role: {type:String,required: true},
   telegramID: {type:String, required: false},
   email: {type:String, required: false},
+  DNI: {type:String, required: false}
 });
 
 const incidentSchema = new mongoose.Schema({
