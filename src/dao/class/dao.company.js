@@ -58,7 +58,22 @@ class CompanyDAO {
     }
   }
 
-
+  async  getCompanyByUserId(userID) {
+    try {
+      const company = await Company.findOne(
+        {'users._id': userID},
+        {users: 0} // Excluir el array de usuarios del resultado
+      );
+  
+      if (company) {
+        return company;
+      } else {
+        return null; // Si no se encuentra la compañía, puedes devolver null o lanzar un error según tus preferencias.
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
 
 }
 

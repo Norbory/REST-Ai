@@ -11,7 +11,7 @@ const jetsonSchema = new mongoose.Schema({
 });
 
 const userSchema = new mongoose.Schema({
-  Name:{type: String, required: true},
+  name:{type: String, required: true},
   username: {type: String, required: true, unique: true},
   password: {type: String, required: true},
   role: {type:String,required: true},
@@ -41,7 +41,7 @@ const incidentSchema = new mongoose.Schema({
 
 const companySchema = new mongoose.Schema({
   Name: {type:String, required: true},
-  CamQty: {type:Number, required: true},
+  CamQty: {type:Number, default: 0},
   areas: {    
     type: [areaSchema],
     default: []
@@ -81,25 +81,6 @@ incidentSchema.pre('save', async function(next) {
     next(error);
   }
 });
-
-userSchema.pre("save", async function (next) {
-  const user = this;
-  if (!user.isModified("password")) return next();
-  const salt = await bcrypt.genSalt(10);
-  const hash = await bcrypt.hash(user.password, salt);
-  user.password = hash;
-  next();
-});
-
-userSchema.methods.comparePassword = function (candidatePassword) {
-  const user = this;
-  return new Promise((resolve, reject) => {
-    bcrypt.compare(candidatePassword, user.password, (err, isMatch) => {
-      if (err) return reject(err);
-      resolve(isMatch);
-    });
-  });
-};
 
 
 const Company = mongoose.model('Company', companySchema);

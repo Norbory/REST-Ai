@@ -12,7 +12,7 @@ const router = (app) => {
   app.use('/company', controllerArea)
   app.use('/company', controllerJetson)
   app.use('/company', controllerUser)
-  app.use('/login', controllerLogin)
+  app.use('/', controllerLogin)
 }
 
 module.exports = router

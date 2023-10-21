@@ -1,70 +1,47 @@
 const express = require('express');
 const router = express.Router();
-const jwt = require('jsonwebtoken');
-const config = require('../../config');
-const UserDAO = require('../../dao/class/dao.users');
+const {generateToken} = require('../../utils/utils');
+const passport = require('passport');
 
-const User = new UserDAO;
 
-// Function to create a token
-function createToken(user) {
-  return jwt.sign(
-    {
-      id: user.id,
-      name: user.name,
-      last: user.surname,
-      email: user.email,
-    },
-    config.jwtSecret,
-    {
-      expiresIn: 86400, // 24 hours
-    }
-  );
-}
 
-// Endpoint para registro de usuarios
-router.post('/signup', async (req, res) => {
-  if (!req.body.username || !req.body.password) {
-    return res.status(400).json({ msg: 'Por favor, envía tu nombre de usuario y contraseña' });
-  }
+// Ruta para el inicio de sesión
+router.post('/login', passport.authenticate('login', { failureRedirect: '/login/error' }), (req, res) => {
+  if(!req.user) return res.status(400).json({ message: 'Error al iniciar sesión' });
+  req.session.user = req.user;
+  req.session.business = req.business;
 
-  const existingUser = await User.getUserByUsername(req.body.username)  ;
-  if (existingUser) {
-    return res.status(400).json({ msg: 'El usuario ya existe' });
-  }
+  const token = generateToken(req.user);
 
-  const newUser = User.addUser(req.body);
-  await newUser.save();
+  return res.status(200).json({ message: 'Sesión iniciada exitosamente', user: req.user, business: req.business, token: token });
+});
 
-  return res.status(201).json(newUser);
+//ruta en caso de error al iniciar sesión
+router.post('/login/error', (req, res) => {
+  return res.status(400).json({ message: 'Error al iniciar sesión' });
+});
+
+// Ruta para el cierre de sesión
+router.get('/logout', (req, res) => {
+  req.logout();
+  res.json({ message: 'Sesión cerrada exitosamente' });
 });
 
 
+// Ruta para registrar un nuevo usuario
+router.post('/register', passport.authenticate('register' , {failureRedirect: '/register/error'}), (req, res) => {
+  if(!req.user) return res.status(400).json({ message: 'Error al registrar usuario y negocio' });
+  req.session.user = req.user;
+  req.session.business = req.business;
 
-// Endpoint para inicio de sesión
-router.post('/signin', async (req, res) => {
-  if (!req.body.username || !req.body.password) {
-    return res.status(400).json({ msg: 'Por favor, envía tu nombre de usuario y contraseña' });
-  }
+  const token = generateToken(req.user);
 
-  const user = await User.getUserByUsername(req.body.username);
-  if (!user) {
-    return res.status(400).json({ msg: 'El usuario no existe' });
-  }
+  return res.status(200).json({ message: 'Usuario y negocio registrados exitosamente', user: req.user, business: req.business, token: token });
+});
 
-  const isMatch = await user.comparePassword(req.body.password);
-  if (isMatch) {
-    const token = createToken(user);
-    res.setHeader('Access-Control-Expose-Headers', 'auth-token');
-    return res.status(200).header('auth-token', token).json({
-      name: user.name,
-      last: user.surname,
-      email: user.email,
-      company_id: user.company_id,
-    });
-  }
-
-  return res.status(400).json({ msg: 'El nombre de usuario o la contraseña son incorrectos' });
+//ruta en caso de error al registrar un usuario
+router.post('/register/error', (req, res) => {
+  return res.status(400).json({ message: 'Error al registrar usuario y negocio' });
 });
 
 module.exports = router;
