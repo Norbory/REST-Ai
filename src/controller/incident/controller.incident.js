@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const cloudinary = require('cloudinary').v2;
 const IncidentDAO = require('../../dao/class/dao.incident');
-
+const cloudinary = require('cloudinary').v2;
 const Incident = new IncidentDAO;
 
 cloudinary.config({
@@ -22,7 +22,7 @@ router.get('/:companyId/incidents', async (req, res) => {
   }
 });
 
-// Agregar un nuevo incidente a una compañía
+//SP32 manda información de incidente a cloudinary y luego a la base de datos
 router.post('/:companyId/incidents', async (req, res) => {
   let url =[];
   const companyId = req.params.companyId;

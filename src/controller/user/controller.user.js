@@ -20,7 +20,7 @@ router.get('/:companyId/users/:userId', async (req, res) => {
   const companyId = req.params.companyId;
   const userId = req.params.userId;
   try {
-    const user = await User.getUserById(companyId, userId);
+    const user = await User.getUserByCompanyId(companyId, userId);
     res.json(user);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -66,5 +66,6 @@ router.delete('/:companyId/users/:userId', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
 
 module.exports = router;
