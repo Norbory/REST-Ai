@@ -10,6 +10,52 @@ const jetsonSchema = new mongoose.Schema({
   ID_Area: {type:mongoose.Schema.Types.ObjectId, required: true},
 });
 
+const reportSchema = new mongoose.Schema({
+  Nombre: {type: String, required: false},
+  DNI: {type: String, required: false},
+  Cargo: {type: String, required: false},
+  Firma: {type: String, required: false},
+  Fecha: {type: String, required: false},
+  Hora: {type: String, required: false},
+  Contrata: {type: String, required: false},
+  ActosSubestandares: {
+    Marked: {type: Boolean, required: false},
+    CheckA: {type: Boolean, required: false},
+    CheckB: {type: Boolean, required: false},
+    CheckC: {type: Boolean, required: false},
+    CheckD: {type: Boolean, required: false},
+    CheckE: {type: Boolean, required: false},
+    CheckF: {type: Boolean, required: false},
+    CheckG: {type: Boolean, required: false},
+    CheckH: {type: Boolean, required: false},
+    CheckI: {type: Boolean, required: false},
+    Otros: {type: Boolean, required: false},
+    OtrosTexto: {type: String, required: false},
+  },
+  DetalleActo: {type: String, required: false},
+  CondicionesSubestandares: {
+    Marked: {type: Boolean, required: false},
+    Check1: {type: Boolean, required: false},
+    Check2: {type: Boolean, required: false},
+    Check3: {type: Boolean, required: false},
+    Check4: {type: Boolean, required: false},
+    Check5: {type: Boolean, required: false},
+    Check6: {type: Boolean, required: false},
+    Otros: {type: Boolean, required: false},
+    OtrosTexto: {type: String, required: false},
+  },
+  DetalleCondicion: {type: String, required: false},
+  Correción: {type: String, required: false},
+  CheckList: {
+    Check1: {type: Boolean, required: false},
+    Check2: {type: Boolean, required: false},
+    Check3: {type: Boolean, required: false},
+  },
+  Observador: {type: String, required: false},
+});
+
+
+
 const userSchema = new mongoose.Schema({
   name:{type: String, required: true},
   username: {type: String, required: true, unique: true},
@@ -36,7 +82,14 @@ const incidentSchema = new mongoose.Schema({
   Deleted: {
     type: Boolean,
     default: false
-  }
+  },
+  // Guardamos solo los IDs de los reportes en el incidente
+  reportes: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Report'
+    }
+  ]
 });
 
 const companySchema = new mongoose.Schema({
@@ -84,6 +137,10 @@ incidentSchema.pre('save', async function(next) {
 
 
 const Company = mongoose.model('Company', companySchema);
+const Report = mongoose.model('Report', reportSchema);
 
 
-module.exports = Company;
+module.exports = {
+  Company,
+  Report
+};
