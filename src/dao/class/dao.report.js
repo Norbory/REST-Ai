@@ -12,7 +12,7 @@ class ReportDAO {
 
         incident.reportes.push(nuevoReporte._id);
 
-        await company.save();
+        await Company.updateOne({ 'incidents._id': incidentId }, { $set: { 'incidents.$.reportes': incident.reportes } });
       } else {
         throw new Error('Incidente no encontrado');
       }
