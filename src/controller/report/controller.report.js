@@ -19,11 +19,21 @@ router.post('/llenar-pdf', async (req, res) => {
         
         // Envía el PDF generado como respuesta
         const pdfPath = path.join(__dirname, '../../utils/formulario_lleno.pdf');
+
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename=formulario_lleno.pdf');
+
         res.sendFile(pdfPath);
+
+
+
     } catch (error) {
         console.error(error);
         res.status(500).send('Error al generar el PDF');
     }
+
+
+
 });
 
 
