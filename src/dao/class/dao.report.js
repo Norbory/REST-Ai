@@ -1,4 +1,4 @@
-const { Company, Report } = require('../models/Company.model');
+const { Company, Report } = require('../models/company.model');
 
 class ReportDAO {
   async subirReporte(incidentId, reportData) {

@@ -2,7 +2,7 @@ const { Router } = require('express')
 
 const router = Router()
 
-const CompanyDAO = require('./../../dao/class/dao.company');
+const CompanyDAO = require('../../dao/class/dao.company');
 
 const Company = new CompanyDAO;
 
