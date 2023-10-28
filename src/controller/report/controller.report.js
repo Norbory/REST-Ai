@@ -23,8 +23,8 @@ router.post('/llenar-pdf', async (req, res) => {
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', 'attachment; filename=formulario_lleno.pdf');
 
-        res.sendFile(pdfPath);
-
+        res.download(pdfPath);
+        
 
 
     } catch (error) {
