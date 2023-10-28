@@ -25,10 +25,10 @@ router.get('/:companyId/incidents', async (req, res) => {
 
 //SP32 manda información de incidente a cloudinary y luego a la base de datos
 router.post('/:companyId/incidents', async (req, res) => {
-  let url =[];
+  let url = [];
   const companyId = req.params.companyId;
   const incidentData = req.body;
-  if( incidentData) {
+  if (incidentData) { // Verificar si incidentData es válido
     const result = await cloudinary.uploader.upload(
       `data:image/png;base64,${incidentData.imageUrls[0]}`
     );
