@@ -42,6 +42,7 @@ router.get('/:id', async (req, res) => {
     const id = req.params.id;
     try {
         const report = await Report.getReportByIncidentId(id);
+
         // Llama a la función para llenar y marcar el PDF
         await llenarYMarcarPDF(report);
         // Envía el PDF generado como respuesta
