@@ -21,12 +21,20 @@ class ReportDAO {
     }
   }
 
-  async getReportById(id) {
-    try{
-      const respose = await Report.findById(id);
-      return respose; 
-    }
-    catch(error){
+  async getReportByIncidentId(incidentId) {
+    try {
+      const company = await Company.findOne({ 'incidents._id': incidentId }, { 'incidents.$': 1 });
+
+      if (company) {
+        const incident = company.incidents[0];
+
+        const reportes = await Report.find({ _id: { $in: incident.reportes } });
+
+        return reportes;
+      } else {
+        throw new Error('Incidente no encontrado');
+      }
+    } catch (error) {
       throw error;
     }
   }
