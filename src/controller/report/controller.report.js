@@ -38,10 +38,10 @@ router.post('/llenar-pdf', async (req, res) => {
 
 
 //Get report by ID, create a PDF and send it to the user
-router.get('/:id', async (req, res) => {
-    const id = req.params.id;
+router.get('/:incidentId', async (req, res) => {
+    const incidentId = req.params.incidentId;
     try {
-        const report = await Report.getReportByIncidentId(id);
+        const report = await Report.getReportByIncidentId(incidentId);
 
         // Llama a la función para llenar y marcar el PDF
         await llenarYMarcarPDF(report);

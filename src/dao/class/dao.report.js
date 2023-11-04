@@ -23,7 +23,13 @@ class ReportDAO {
 
   async getReportByIncidentId(incidentId) {
     try {
-        const report = await Report.findOne({incidentId: incidentId});
+      
+        const report = await Report.findOne({incidentId: incidentId.toString()});
+        //VALIDAR SI EL REPORTE EXISTE
+        if(!report) {
+            throw new Error('Reporte no encontrado');
+        }
+        
         return report;
 
     } catch (error) {
