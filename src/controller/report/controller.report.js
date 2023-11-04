@@ -37,4 +37,24 @@ router.post('/llenar-pdf', async (req, res) => {
 });
 
 
+//Get report by ID, create a PDF and send it to the user
+router.get('/:id', async (req, res) => {
+    const id = req.params.id;
+    try {
+        const report = await Report.getReportById(id);
+        // Llama a la función para llenar y marcar el PDF
+        await llenarYMarcarPDF(report);
+        // Envía el PDF generado como respuesta
+        const pdfPath = path.join(__dirname, '../../utils/formulario_lleno.pdf');
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename=formulario_lleno.pdf');
+        res.download(pdfPath);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+
+
+
 module.exports = router

@@ -20,6 +20,19 @@ class ReportDAO {
       throw error;
     }
   }
+
+  async getReportById(id) {
+    try{
+      const respose = await Report.findById(id);
+      return respose; 
+    }
+    catch(error){
+      throw error;
+    }
+  }
+
 }
+
+
 
 module.exports = ReportDAO;
