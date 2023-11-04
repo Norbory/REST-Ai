@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const { Company, Report } = require('../models/company.model');
 
 class ReportDAO {
@@ -23,10 +24,10 @@ class ReportDAO {
 
   async getReportByIncidentId(incidentId) {
     try {
-      const objectId = mongoose.Types.ObjectId(incidentId);
+      const objectId = new mongoose.Types.ObjectId(incidentId);
   
       const report = await Report.findOne({ incidentId: objectId });
-  
+      console.log(report,"reporte");
       if (!report) {
         throw new Error('Reporte no encontrado');
       }
