@@ -1,6 +1,6 @@
 
 const app = require('./index')
-const port = process.env.PORT || 80
+const {port} = require('./config')
 
 
 const httpserver = app.listen(port, ()=>{

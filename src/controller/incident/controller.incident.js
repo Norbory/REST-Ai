@@ -10,6 +10,18 @@ cloudinary.config({
   api_secret: 'yBoghdZkYzBETXFy5Dlt9VgWnP8',
 });
 
+
+//get all incidents by company
+router.get('/:companyId/incidents', async (req, res) => {
+  const companyId = req.params.companyId;
+  try {
+    const incidents = await Incident.getIncidentsByCompanyId(companyId);
+    res.json(incidents);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 //SP32 manda información de incidente a cloudinary y luego a la base de datos
 router.post('/:companyId/incidents', async (req, res) => {
   let url =[];

@@ -1,4 +1,5 @@
-const { Company, Report } = require('../models/Company.model');
+const mongoose = require('mongoose');
+const { Company, Report } = require('../models/company.model');
 
 class ReportDAO {
   async subirReporte(incidentId, reportData) {
@@ -12,7 +13,7 @@ class ReportDAO {
 
         incident.reportes.push(nuevoReporte._id);
 
-        await company.save();
+        await Company.updateOne({ 'incidents._id': incidentId }, { $set: { 'incidents.$.reportes': incident.reportes } });
       } else {
         throw new Error('Incidente no encontrado');
       }
@@ -20,6 +21,25 @@ class ReportDAO {
       throw error;
     }
   }
+
+  async getReportByIncidentId(incidentId) {
+    try {
+      const objectId = new mongoose.Types.ObjectId(incidentId);
+  
+      const report = await Report.findOne({ incidentId: objectId });
+      console.log(report,"reporte");
+      if (!report) {
+        throw new Error('Reporte no encontrado');
+      }
+  
+      return report;
+    } catch (error) {
+      throw error;
+    }
+  }
+  
 }
+
+
 
 module.exports = ReportDAO;

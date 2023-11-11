@@ -1,6 +1,4 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-
 
 const areaSchema = new mongoose.Schema({
   Name: {type:String, required: true},
@@ -11,6 +9,7 @@ const jetsonSchema = new mongoose.Schema({
 });
 
 const reportSchema = new mongoose.Schema({
+  incidentId: {type:mongoose.Schema.Types.ObjectId, required: false},
   Nombre: {type: String, required: false},
   DNI: {type: String, required: false},
   Cargo: {type: String, required: false},

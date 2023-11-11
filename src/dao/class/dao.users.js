@@ -1,4 +1,4 @@
-const {Company} = require('../models/Company.model');
+const {Company} = require('../models/company.model');
 const { createHash } = require('../../utils/utils');
 
 class UserDAO {
