@@ -11,7 +11,7 @@ router.post('/llenar-pdf', async (req, res) => {
     const {incidentId} = req.body;
     //comentario
     try {
-        // Llama a la función para llenar y marcar el PDF
+        // Llama a la función para llenar y marcar el PDFs
         await llenarYMarcarPDF(reportData);
 
         // Guarda el PDF generado como reporte
