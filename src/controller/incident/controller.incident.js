@@ -39,10 +39,8 @@ router.post('/:companyId/incidents', async (req, res) => {
     const newIncident = await Incident.addIncident(companyId, incidentData);
     res.json(newIncident);
   } catch (error) {
-    res.status(500).json({ 
-      "message": "Surgio un error al crear el incidente" 
-    });
-  }
+    res.status(500).json({message: "Surgio un error al crear el incidente"});
+    }
 });
 
 // Actualizar un incidente existente
