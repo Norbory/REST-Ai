@@ -6,6 +6,8 @@ const mongoConnect = require('../db/index.js')
 const passport = require('passport')
 const initialiazePassport = require('./config/passport.config')
 const session = require('express-session')
+const cors = require('cors');
+
 
 const app = express()
 
@@ -14,6 +16,8 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(morgan('dev'))
 
+// Configurar CORS para permitir todas las solicitudes
+app.use(cors());
 
 // Configura express-session
 app.use(session({
