@@ -9,6 +9,7 @@ const Report = new ReportDAO;
 router.post('/llenar-pdf', async (req, res) => {
     const reportData = req.body;
     const {incidentId} = req.body;
+    console.log(reportData);
     //comentario
     try {
         // Llama a la función para llenar y marcar el PDFs
