@@ -22,18 +22,11 @@ router.post('/llenar-pdf', async (req, res) => {
 
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', 'attachment; filename=formulario_lleno.pdf');
-
-        res.download(pdfPath);
         
-
-
     } catch (error) {
         console.error(error);
         res.status(500).send('Error al generar el PDF');
     }
-
-
-
 });
 
 
