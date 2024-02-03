@@ -27,19 +27,25 @@ router.post('/:companyId/incidents', async (req, res) => {
   let url =[];
   const companyId = req.params.companyId;
   const incidentData = req.body;
-  if( incidentData) {
-    const result = await cloudinary.uploader.upload(
-    `data:image/png;base64,${incidentData.imageUrls[0]}`
-    );
-    url[0] = result.secure_url;
-    console.log("URL de imagen subida a Cloudinary:", result.secure_url);
-    incidentData.imageUrls = url;
+  if(incidentData) {
+    try {
+      const result = await cloudinary.uploader.upload(`data:image/png;base64,${incidentData.imageUrls[0]}`);
+      url[0] = result.secure_url;
+      console.log("URL de imagen subida a Cloudinary:", result.secure_url);
+      incidentData.imageUrls = url;
+    } catch (error) {
+      console.error("Error al subir la imagen a Cloudinary:", error);
+      return res.status(500).json({ message: "Error al subir la imagen a Cloudinary" });
+    }
+  } else {
+    return res.status(400).json({ message: "Datos de entrada inválidos" });
   }
   try { 
     const newIncident = await Incident.addIncident(companyId, incidentData);
     res.json(newIncident);
   } catch (error) {
-    res.status(500).json({message: "Surgio un error al crear el incidente"});
+    console.error("Error al agregar el incidente:", error);
+    res.status(500).json({ message: "Surgió un error al crear el incidente" });
     }
 });
 
