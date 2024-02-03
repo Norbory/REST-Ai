@@ -29,7 +29,22 @@ router.post('/:companyId/incidents', async (req, res) => {
   const incidentData = req.body;
   if(incidentData) {
     try {
-      const result = await cloudinary.uploader.upload(`data:image/png;base64,${incidentData.imageUrls[0]}`);
+      let result;
+
+      if (incidentData.imageUrls[0].startsWith('data:image/png;base64,')) {
+        // Si es una cadena Base64 en formato PNG
+        result = await cloudinary.uploader.upload(incidentData.imageUrls[0]);
+      }
+        // Verificar si la imagen es un archivo o una cadena Base64 en formato JPG
+      else if (incidentData.imageUrls[0].startsWith('data:image/jpeg;base64,')) {
+        result = await cloudinary.uploader.upload(incidentData.imageUrls[0]);
+      }
+      // Si es un archivo en formato PNG
+      else {
+        result = await cloudinary.uploader.upload(`data:image/jpg;base64,${incidentData.imageUrls[0]}`);
+      }
+
+      result = await cloudinary.uploader.upload(`data:image/png;base64,${incidentData.imageUrls[0]}`);
       url[0] = result.secure_url;
       console.log("URL de imagen subida a Cloudinary:", result.secure_url);
       incidentData.imageUrls = url;
@@ -40,6 +55,7 @@ router.post('/:companyId/incidents', async (req, res) => {
   } else {
     return res.status(400).json({ message: "Datos de entrada inválidos" });
   }
+
   try { 
     const newIncident = await Incident.addIncident(companyId, incidentData);
     res.json(newIncident);
