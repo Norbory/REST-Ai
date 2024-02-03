@@ -39,15 +39,15 @@ router.post('/:companyId/incidents', async (req, res) => {
       else if (incidentData.imageUrls[0].startsWith('data:image/jpeg;base64,')) {
         result = await cloudinary.uploader.upload(incidentData.imageUrls[0]);
       }
-      // Si es un archivo en formato PNG
+      // Si es un archivo en formato file
       else {
-        result = await cloudinary.uploader.upload(`data:image/jpg;base64,${incidentData.imageUrls[0]}`);
+        result = await cloudinary.uploader.upload(incidentData.imageUrls[0]);
       }
-
       result = await cloudinary.uploader.upload(`data:image/png;base64,${incidentData.imageUrls[0]}`);
       url[0] = result.secure_url;
       console.log("URL de imagen subida a Cloudinary:", result.secure_url);
       incidentData.imageUrls = url;
+
     } catch (error) {
       console.error("Error al subir la imagen a Cloudinary:", error);
       return res.status(500).json({ message: "Error al subir la imagen a Cloudinary" });
