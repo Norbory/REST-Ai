@@ -13,17 +13,20 @@ router.post('/llenar-pdf', async (req, res) => {
     //comentario
     try {
         // Llama a la función para llenar y marcar el PDFs
-        await llenarYMarcarPDF(reportData);
+        const pdfBytes = await llenarYMarcarPDF(reportData);
 
         // Guarda el PDF generado como reporte
         await Report.subirReporte(incidentId, reportData);
         
         // Envía el PDF generado como respuesta
-        const pdfPath = path.join(__dirname, '../../utils/formulario_lleno.pdf');
+        // const pdfPath = path.join(__dirname, '../../utils/formulario_lleno.pdf');
 
+        // res.setHeader('Content-Type', 'application/pdf');
+        // res.setHeader('Content-Disposition', 'attachment; filename=formulario_lleno.pdf');
+        // Envía el PDF generado como respuesta
         res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', 'attachment; filename=formulario_lleno.pdf');
-        
+        res.send(pdfBytes);
+
     } catch (error) {
         console.error(error);
         res.status(500).send('Error al generar el PDF');
@@ -42,11 +45,13 @@ router.get('/report/:incidentId', async (req, res) => {
             res.status(404).json({ message: 'Reporte no encontrado' }); 
         }
         // Llama a la función para llenar y marcar el PDF
-        await llenarYMarcarPDF(report);
+        const pdfBytes = await llenarYMarcarPDF(report);
         // Envía el PDF generado como respuesta
-        const pdfPath = path.join(__dirname, '../../utils/formulario_lleno.pdf');
+        // const pdfPath = path.join(__dirname, '../../utils/formulario_lleno.pdf');
+        // res.setHeader('Content-Type', 'application/pdf');
+        // res.setHeader('Content-Disposition', 'attachment; filename=formulario_lleno.pdf');
         res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', 'attachment; filename=formulario_lleno.pdf');
+        res.send(pdfBytes);
         res.download(pdfPath);
     } catch (error) {
         res.status(500).json({ message: error.message });

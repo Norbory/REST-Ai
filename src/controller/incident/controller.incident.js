@@ -41,7 +41,7 @@ router.post('/:companyId/incidents', async (req, res) => {
     return res.status(400).json({ message: "Datos de entrada inválidos" });
   }
 
-  try { 
+  try {
     const newIncident = await Incident.addIncident(companyId, incidentData);
     res.json(newIncident);
   } catch (error) {
