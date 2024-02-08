@@ -1,4 +1,5 @@
 const { Router } = require('express');
+const pdfParse = require('pdf-parse');
 const llenarYMarcarPDF = require('../../utils/pdf_generator');
 const path = require('path');
 const router = Router()
@@ -46,14 +47,20 @@ router.get('/report/:incidentId', async (req, res) => {
         }
         // Llama a la función para llenar y marcar el PDF
         const pdfBytes = await llenarYMarcarPDF(report);
+
+        const pdfData = await pdfParse(pdfBytes);
+        if (!pdfData.text) {
+            throw new Error('Los datos generados no son un PDF válido');
+        }
+        
         // Envía el PDF generado como respuesta
         // const pdfPath = path.join(__dirname, '../../utils/formulario_lleno.pdf');
         // res.setHeader('Content-Type', 'application/pdf');
         // res.setHeader('Content-Disposition', 'attachment; filename=formulario_lleno.pdf');
         res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', 'inline; filename=formulario_lleno.pdf');
-        //res.send(pdfBytes);
-        res.download(pdfBytes);
+        res.setHeader('Content-Disposition', `inline; filename=formulario_${incidentId}.pdf`);
+        res.send(pdfBytes);
+        //res.download(pdfBytes);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
