@@ -10,7 +10,6 @@ const Report = new ReportDAO;
 router.post('/llenar-pdf', async (req, res) => {
     const reportData = req.body;
     const {incidentId} = req.body;
-    console.log(reportData);
     //comentario
     try {
         // Llama a la función para llenar y marcar el PDFs
@@ -40,8 +39,6 @@ router.get('/report/:incidentId', async (req, res) => {
     const incidentId = req.params.incidentId;
     try {
         const report = await Report.getReportByIncidentId(incidentId);
-
-        console.log(report);
         if (!report) {
             res.status(404).json({ message: 'Reporte no encontrado' }); 
         }
