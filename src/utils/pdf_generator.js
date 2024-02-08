@@ -1,8 +1,14 @@
+const cloudinary = require('cloudinary').v2;
 const { PDFDocument, rgb } = require('pdf-lib');
 const fs = require('fs').promises;
 //libreria para obetner fecha y hora
 
-
+cloudinary.config({
+    cloud_name: 'dmbtlv0hg',
+    api_key: '381815326731569',
+    api_secret: 'yBoghdZkYzBETXFy5Dlt9VgWnP8',
+  });
+  
 const inch = 72.0
 const cm = inch / 2.54
 
@@ -89,6 +95,7 @@ async function llenarYMarcarPDF(info) {
     const pdfBytesLlenado = await pdfDoc.save();
 
     // Guarda el PDF llenado en un nuevo archivo
+    cloudinary.v2.uploader.upload(pdfBytesLlenado, function(error, result) {console.log(result, error); });
     // await fs.writeFile('./src/utils/formulario_lleno.pdf', pdfBytesLlenado);
     return pdfBytesLlenado;
 }

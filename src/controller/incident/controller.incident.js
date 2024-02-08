@@ -10,7 +10,6 @@ cloudinary.config({
   api_secret: 'yBoghdZkYzBETXFy5Dlt9VgWnP8',
 });
 
-
 //get all incidents by company
 router.get('/:companyId/incidents', async (req, res) => {
   const companyId = req.params.companyId;
