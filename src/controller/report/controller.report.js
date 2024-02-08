@@ -2,6 +2,9 @@ const { Router } = require('express');
 const pdfParse = require('pdf-parse');
 const llenarYMarcarPDF = require('../../utils/pdf_generator');
 const path = require('path');
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
 const router = Router()
 const ReportDAO = require('../../dao/class/dao.report');
 const Report = new ReportDAO;
@@ -16,12 +19,17 @@ router.post('/llenar-pdf', async (req, res) => {
         // Guarda el PDF generado como reporte
         await Report.subirReporte(incidentId, reportData);
         // Envía el PDF generado como respuesta
+
         // const pdfPath = path.join(__dirname, '../../utils/formulario_lleno.pdf');
         // res.setHeader('Content-Type', 'application/pdf');
         // res.setHeader('Content-Disposition', 'attachment; filename=formulario_lleno.pdf');
         // Envía el PDF generado como respuesta
+        const tempFilePath = path.join(os.tmpdir(), `formulario_${incidentId}.pdf`);
+        fs.writeFileSync(tempFilePath, pdfBytes);
         res.setHeader('Content-Type', 'application/pdf');
-        res.send(pdfBytes);
+        res.send(tempFilePath);
+        await fs.unlink(tempFilePath);
+
     } catch (error) {
         console.error(error);
         res.status(500).send('Error al generar el PDF');
@@ -48,9 +56,12 @@ router.get('/report/:incidentId', async (req, res) => {
         // const pdfPath = path.join(__dirname, '../../utils/formulario_lleno.pdf');
         // res.setHeader('Content-Type', 'application/pdf');
         // res.setHeader('Content-Disposition', 'attachment; filename=formulario_lleno.pdf');
+        const tempFilePath = path.join(os.tmpdir(), `formulario_${incidentId}.pdf`);
+        fs.writeFileSync(tempFilePath, pdfBytes);
         res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', `inline; filename=formulario_${incidentId}.pdf`);
-        res.send(pdfBytes);
+        res.send(tempFilePath);
+        await fs.unlink(tempFilePath);
+        
         //res.download(pdfBytes);
     } catch (error) {
         res.status(500).json({ message: error.message });

@@ -95,7 +95,6 @@ async function llenarYMarcarPDF(info) {
     const pdfBytesLlenado = await pdfDoc.save();
 
     // Guarda el PDF llenado en un nuevo archivo
-    cloudinary.v2.uploader.upload(pdfBytesLlenado, function(error, result) {console.log(result, error); });
     // await fs.writeFile('./src/utils/formulario_lleno.pdf', pdfBytesLlenado);
     return pdfBytesLlenado;
 }
