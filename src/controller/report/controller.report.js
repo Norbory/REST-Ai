@@ -4,7 +4,6 @@ const llenarYMarcarPDF = require('../../utils/pdf_generator');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
-const path = require('path');
 const router = Router()
 const ReportDAO = require('../../dao/class/dao.report');
 const Report = new ReportDAO;
@@ -61,7 +60,7 @@ router.get('/report/:incidentId', async (req, res) => {
         res.setHeader('Content-Type', 'application/pdf');
         res.send(tempFilePath);
         await fs.unlink(tempFilePath);
-        
+
         //res.download(pdfBytes);
     } catch (error) {
         res.status(500).json({ message: error.message });
