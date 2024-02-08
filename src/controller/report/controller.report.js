@@ -52,7 +52,7 @@ router.get('/report/:incidentId', async (req, res) => {
         // res.setHeader('Content-Disposition', 'attachment; filename=formulario_lleno.pdf');
         res.setHeader('Content-Type', 'application/pdf');
         res.send(pdfBytes);
-        res.download(pdfPath);
+        //res.download(pdfBytes);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
