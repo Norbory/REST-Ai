@@ -26,8 +26,14 @@ router.post('/llenar-pdf', async (req, res) => {
         const tempFilePath = path.join(os.tmpdir(), `formulario_${incidentId}.pdf`);
         fs.writeFileSync(tempFilePath, pdfBytes);
         res.setHeader('Content-Type', 'application/pdf');
-        res.send(tempFilePath);
-        await fs.unlink(tempFilePath);
+        res.sendFile(tempFilePath, () => {
+            // Después de enviar el archivo, elimina el archivo temporal
+            fs.unlink(tempFilePath, (err) => {
+                if (err) {
+                    console.error('Error al eliminar el archivo temporal:', err);
+                }
+            });
+        });
 
     } catch (error) {
         console.error(error);
@@ -58,8 +64,14 @@ router.get('/report/:incidentId', async (req, res) => {
         const tempFilePath = path.join(os.tmpdir(), `formulario_${incidentId}.pdf`);
         fs.writeFileSync(tempFilePath, pdfBytes);
         res.setHeader('Content-Type', 'application/pdf');
-        res.send(tempFilePath);
-        await fs.unlink(tempFilePath);
+        res.sendFile(tempFilePath, () => {
+            // Después de enviar el archivo, elimina el archivo temporal
+            fs.unlink(tempFilePath, (err) => {
+                if (err) {
+                    console.error('Error al eliminar el archivo temporal:', err);
+                }
+            });
+        });
 
         //res.download(pdfBytes);
     } catch (error) {
