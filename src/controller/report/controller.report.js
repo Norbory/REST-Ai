@@ -87,5 +87,29 @@ router.get('/reporte-generado/last', async (req, res) => {
     res.download(pdfPath);
 });
 
+// Importa el modelo del reporte
+const ReportModel = require('../../models/reportModel');
+
+// Define el endpoint para obtener los valores del reporte por incidentId
+router.get('/reporte/:incidentId', async (req, res) => {
+  try {
+    const incidentId = req.params.incidentId;
+    // Busca el reporte por incidentId en la base de datos
+    const report = await ReportModel.findOne({ incidentId });
+
+    // Si el reporte no se encuentra, devuelve un error 404
+    if (!report) {
+      return res.status(404).json({ message: 'Reporte no encontrado' });
+    }
+
+    // Si el reporte se encuentra, devuelve los valores del reporte
+    res.json(report);
+
+  } catch (error) {
+    // Si ocurre algún error, devuelve un error 500
+    console.error(error);
+    res.status(500).json({ message: 'Error al obtener los valores del reporte' });
+  }
+});
 
 module.exports = router
