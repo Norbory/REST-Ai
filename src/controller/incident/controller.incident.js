@@ -23,31 +23,34 @@ router.get('/:companyId/incidents', async (req, res) => {
 
 //SP32 manda información de incidente a cloudinary y luego a la base de datos
 router.post('/:companyId/incidents', async (req, res) => {
-  let url =[];
+  let url = [];
   const companyId = req.params.companyId;
   const incidentData = req.body;
-  if(incidentData) {
-    try {
-      const result = await cloudinary.uploader.upload(`data:image/png;base64,${incidentData.imageUrls[0]}`);
-      url[0] = result.secure_url;
-      console.log("URL de imagen subida a Cloudinary:", result.secure_url);
-      incidentData.imageUrls = url;
-    } catch (error) {
-      console.error("Error al subir la imagen a Cloudinary:", error);
-      return res.status(500).json({ message: "Error al subir la imagen a Cloudinary" });
-    }
-  } else {
+
+  // Verificar si hay datos de incidente en la solicitud
+  if (!incidentData) {
     return res.status(400).json({ message: "Datos de entrada inválidos" });
   }
 
   try {
+    // Verificar si hay una imagen en la solicitud
+    if (incidentData.imageUrls && incidentData.imageUrls.length > 0) {
+      // Subir la imagen a Cloudinary si está presente
+      const result = await cloudinary.uploader.upload(`data:image/png;base64,${incidentData.imageUrls[0]}`);
+      url[0] = result.secure_url;
+      console.log("URL de imagen subida a Cloudinary:", result.secure_url);
+      incidentData.imageUrls = url;
+    }
+    
+    // Agregar el incidente a la base de datos
     const newIncident = await Incident.addIncident(companyId, incidentData);
     res.json(newIncident);
   } catch (error) {
     console.error("Error al agregar el incidente:", error);
     res.status(500).json({ message: "Surgió un error al crear el incidente" });
-    }
+  }
 });
+
 
 // Actualizar un incidente existente
 router.put('/:companyId/incidents/:incidentId', async (req, res) => {
