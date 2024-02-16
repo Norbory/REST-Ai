@@ -89,7 +89,8 @@ const incidentSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Report'
     }
-  ]
+  ],
+  supervisor: {type: String, required: false},
 });
 
 const companySchema = new mongoose.Schema({
