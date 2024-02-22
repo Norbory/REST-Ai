@@ -101,5 +101,17 @@ router.get('/:companyId/incidents/statistics', async (req, res) => {
   }
 });
 
+// Ruta para eliminar un incidente
+router.delete('/:companyId/incidents/:incidentId', async (req, res) => {
+  const companyId = req.params.companyId;
+  const incidentId = req.params.incidentId;
+
+  try {s
+    await Incident.deleteIncident(companyId, incidentId);
+    res.json({ message: 'Incident deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 module.exports = router;

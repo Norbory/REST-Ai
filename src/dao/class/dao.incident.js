@@ -35,6 +35,20 @@ class IncidentDAO {
     }
   }
 
+  async deleteIncident(companyId, incidentId) {
+    try {
+      const company = await Company.findById(companyId);
+      const incidentIndex = company.incidents.findIndex(incident => incident._id.toString() === incidentId);
+      if (incidentIndex === -1) {
+        throw new Error('Incident not found');
+      }
+      company.incidents.splice(incidentIndex, 1);
+      await company.save();
+    } catch (error) {
+      throw error;
+    }
+  } 
+
   async getIncidentsByCompanyIdAndDate(companyId, date) {
     try {
       const company = await Company.findById(companyId);
