@@ -21,7 +21,7 @@ app.use(cors());
 
 // Configura express-session
 app.use(session({
-    secret: 'SafeAI', // Cambia esto a una cadena secreta única y segura
+    secret: 'HarkAI', // Cambia esto a una cadena secreta única y segura
     resave: true,
     saveUninitialized: true
   }));
