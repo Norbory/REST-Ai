@@ -1,7 +1,8 @@
 
-const app = require('./index')
-const http = require('http')
-const {port} = require('./config')
+const app = require('./index');
+const http = require('http');
+const {port} = require('./config');
+const sockets = require('./sockets');
 const { Server } = require('socket.io');
 
 const servidor = http.createServer(app);
