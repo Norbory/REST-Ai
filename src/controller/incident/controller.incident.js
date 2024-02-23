@@ -3,7 +3,7 @@ const router = express.Router();
 const IncidentDAO = require('../../dao/class/dao.incident');
 const cloudinary = require('cloudinary').v2;
 const Incident = new IncidentDAO;
-const sockets = require('./sockets'); // Importa el archivo de sockets
+const sockets = require('../../sockets'); // Importa el archivo de sockets
 
 cloudinary.config({
   cloud_name: 'dmbtlv0hg',
