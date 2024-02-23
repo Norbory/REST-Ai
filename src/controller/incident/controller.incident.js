@@ -60,14 +60,17 @@ router.put('/:companyId/incidents/:incidentId', async (req, res) => {
   const newData = req.body;
   try {
     const updatedIncident = await Incident.updateIncident(companyId, incidentId, newData);
-    res.json(updatedIncident);
-
+    
     // Emitir un evento 'server:updateCards' a través del socket después de la actualización
     sockets(io).emit('server:updateCards', {});
+
+    // Enviar la respuesta HTTP con los datos actualizados
+    res.json(updatedIncident);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
+
 
 // Endpoint para obtener el resumen de incidentes del día
 router.get('/:companyId/incidents/summary', async (req, res) => {
