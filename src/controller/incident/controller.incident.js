@@ -3,6 +3,7 @@ const router = express.Router();
 const IncidentDAO = require('../../dao/class/dao.incident');
 const cloudinary = require('cloudinary').v2;
 const Incident = new IncidentDAO;
+const sockets = require('./sockets'); // Importa el archivo de sockets
 
 cloudinary.config({
   cloud_name: 'dmbtlv0hg',
@@ -60,6 +61,9 @@ router.put('/:companyId/incidents/:incidentId', async (req, res) => {
   try {
     const updatedIncident = await Incident.updateIncident(companyId, incidentId, newData);
     res.json(updatedIncident);
+
+    // Emitir un evento 'server:updateCards' a través del socket después de la actualización
+    sockets(io).emit('server:updateCards', {});
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -106,7 +110,7 @@ router.delete('/:companyId/incidents/:incidentId', async (req, res) => {
   const companyId = req.params.companyId;
   const incidentId = req.params.incidentId;
 
-  try {s
+  try {
     await Incident.deleteIncident(companyId, incidentId);
     res.json({ message: 'Incident deleted successfully' });
   } catch (error) {
