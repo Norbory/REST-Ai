@@ -67,7 +67,7 @@ router.put('/:companyId/incidents/:incidentId', async (req, res) => {
     // Enviar la respuesta HTTP con los datos actualizados
     res.json(updatedIncident);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message + "Error al actualizar el incidente"});
   }
 });
 
