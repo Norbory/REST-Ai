@@ -63,6 +63,7 @@ router.put('/:companyId/incidents/:incidentId', async (req, res) => {
     
     // Emitir un evento 'server:updateCards' a través del socket después de la actualización
     sockets(io).emit('server:updateCards', {});
+    console.log('Evento "server:updateCards" emitido');
 
     // Enviar la respuesta HTTP con los datos actualizados
     res.json(updatedIncident);
