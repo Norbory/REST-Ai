@@ -3,7 +3,6 @@ const router = express.Router();
 const IncidentDAO = require('../../dao/class/dao.incident');
 const cloudinary = require('cloudinary').v2;
 const Incident = new IncidentDAO;
-const sockets = require('../../sockets'); // Importa el archivo de sockets
 
 cloudinary.config({
   cloud_name: 'dmbtlv0hg',
@@ -60,11 +59,6 @@ router.put('/:companyId/incidents/:incidentId', async (req, res) => {
   const newData = req.body;
   try {
     const updatedIncident = await Incident.updateIncident(companyId, incidentId, newData);
-    
-    // Emitir un evento 'server:updateCards' a través del socket después de la actualización
-    sockets(io).emit('server:updateCards', {});
-    console.log('Evento "server:updateCards" emitido');
-
     // Enviar la respuesta HTTP con los datos actualizados
     res.json(updatedIncident);
   } catch (error) {
