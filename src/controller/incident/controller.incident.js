@@ -59,11 +59,13 @@ router.put('/:companyId/incidents/:incidentId', async (req, res) => {
   const newData = req.body;
   try {
     const updatedIncident = await Incident.updateIncident(companyId, incidentId, newData);
+    // Enviar la respuesta HTTP con los datos actualizados
     res.json(updatedIncident);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message + "Error al actualizar el incidente"});
   }
 });
+
 
 // Endpoint para obtener el resumen de incidentes del día
 router.get('/:companyId/incidents/summary', async (req, res) => {
@@ -106,7 +108,7 @@ router.delete('/:companyId/incidents/:incidentId', async (req, res) => {
   const companyId = req.params.companyId;
   const incidentId = req.params.incidentId;
 
-  try {s
+  try {
     await Incident.deleteIncident(companyId, incidentId);
     res.json({ message: 'Incident deleted successfully' });
   } catch (error) {
