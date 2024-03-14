@@ -7,7 +7,7 @@ const passport = require('passport')
 const initialiazePassport = require('./config/passport.config')
 const session = require('express-session')
 const cors = require('cors');
-
+const run = require("./transcribe");
 
 const app = express()
 
