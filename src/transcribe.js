@@ -10,13 +10,22 @@ const run = async (file) => {
     const audioUrl = file;
     const config = {
         audio_url: audioUrl,
+        speaker_labels: true,
     };
 
     try {
         const transcript = await client.transcripts.create(config);
-        const text = transcript.text;
-        console.log(text);
-        return text ;
+        let dialogues = '';
+        let lastSpeaker = null;
+        for (const utterance of transcript.utterances) {
+            if (lastSpeaker !== null && utterance.speaker !== lastSpeaker) {
+                dialogues += '\n';
+            }
+            dialogues += `Speaker ${utterance.speaker}:  ${utterance.text}` + ' ';
+            lastSpeaker = utterance.speaker;
+        }
+        console.log(dialogues);
+        return dialogues;
     } catch (error) {
         console.error(error);
     }

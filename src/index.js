@@ -34,6 +34,7 @@ app.use(passport.initialize())
 app.use(passport.session())
 
 router(app)
+
 // Ruta para la transcripción de archivos
 app.post('/transcribe', upload.single('file'), async (req, res) => {
   try {
