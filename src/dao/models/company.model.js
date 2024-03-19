@@ -54,7 +54,7 @@ const reportSchema = new mongoose.Schema({
 });
 
 const tokenSchema = new mongoose.Schema({
-  token: {type: String, required: true, unique: true},
+  token: {type: String, required: true},
 });
 
 const userSchema = new mongoose.Schema({
