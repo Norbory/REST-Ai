@@ -53,7 +53,9 @@ const reportSchema = new mongoose.Schema({
   Observador: {type: String, required: false},
 });
 
-
+const tokenSchema = new mongoose.Schema({
+  token: {type: String, required: true},
+});
 
 const userSchema = new mongoose.Schema({
   name:{type: String, required: true},
@@ -106,6 +108,10 @@ const companySchema = new mongoose.Schema({
   },
   users: {
     type: [userSchema],
+    default: []
+  },
+  tokens: {
+    type: [tokenSchema],
     default: []
   },
   incidents: {

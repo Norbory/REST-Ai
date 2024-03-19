@@ -1,7 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const IncidentDAO = require('../../dao/class/dao.incident');
+const TokenDAO = require('../../dao/class/dao.token');
 const cloudinary = require('cloudinary').v2;
+
+const Token = new TokenDAO;
 const Incident = new IncidentDAO;
 
 cloudinary.config({
@@ -33,6 +36,7 @@ router.post('/:companyId/incidents', async (req, res) => {
   }
 
   try {
+    const tokens = await Token.getTokensByCompanyId(companyId);
     // Verificar si hay una imagen en la solicitud
     if (incidentData.imageUrls && incidentData.imageUrls.length > 0) {
       // Subir la imagen a Cloudinary si está presente
@@ -41,7 +45,34 @@ router.post('/:companyId/incidents', async (req, res) => {
       console.log("URL de imagen subida a Cloudinary:", result.secure_url);
       incidentData.imageUrls = url;
     }
-    
+
+    if (incidentData.supervisor) {
+      for (let token of tokens) {
+        if (!Expo.isExpoPushToken(token)) {
+            throw new Error(`Push token ${token} is not a valid Expo push token`);
+        }
+        expo.sendPushNotificationsAsync([
+            {
+                to: token,
+                title: `Nueva alerta de incidente`,
+                body: `Se ha registrado un nuevo incidente en el área de ${incidentData.areaName} por la IA`,
+            },
+        ]);
+      }
+    } else {
+        for (let token of tokens) {
+          if (!Expo.isExpoPushToken(token)) {
+              throw new Error(`Push token ${token} is not a valid Expo push token`);
+          }
+          expo.sendPushNotificationsAsync([
+              {
+                  to: token,
+                  title: `Nueva alerta de incidente`,
+                  body: `Se ha registrado un nuevo incidente en el área de ${incidentData.areaName} por ${incidentData.supervisor}`,
+              },
+          ]);
+        }
+    }
     // Agregar el incidente a la base de datos
     const newIncident = await Incident.addIncident(companyId, incidentData);
     res.json(newIncident);
