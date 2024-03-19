@@ -3,9 +3,11 @@ const router = express.Router();
 const IncidentDAO = require('../../dao/class/dao.incident');
 const TokenDAO = require('../../dao/class/dao.token');
 const cloudinary = require('cloudinary').v2;
+const { Expo } = require('expo-server-sdk');
 
 const Token = new TokenDAO;
 const Incident = new IncidentDAO;
+const expo = new Expo();
 
 cloudinary.config({
   cloud_name: 'dmbtlv0hg',
