@@ -13,9 +13,13 @@ class TokenDAO {
     async addToken(companyId, tokenData) {
         try {
             const company = await Company.findById(companyId);
-            company.tokens.push(tokenData);
-            const savedCompany = await company.save();
-            return savedCompany.tokens[savedCompany.tokens.length - 1];
+            if (!company.tokens.includes(tokenData)) {
+                company.tokens.push(tokenData);
+                const savedCompany = await company.save();
+                return savedCompany.tokens[savedCompany.tokens.length - 1];
+            } else {
+                throw new Error('Token ya existe');
+            }
         }
         catch (error) {
             throw error;
