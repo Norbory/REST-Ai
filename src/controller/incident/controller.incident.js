@@ -48,8 +48,11 @@ router.post('/:companyId/incidents', async (req, res) => {
       console.log("URL de imagen subida a Cloudinary:", result.secure_url);
       incidentData.imageUrls = url;
     }
+    // Agregar el incidente a la base de datos
+    const newIncident = await Incident.addIncident(companyId, incidentData);
+    res.json(newIncident);
 
-    if (!incidentData.supervisor) {
+    if (!newIncident.supervisor) {
       for (let token of listTokens) {
         if (!Expo.isExpoPushToken(token)) {
             throw new Error(`Push token ${token} is not a valid Expo push token`);
@@ -58,7 +61,7 @@ router.post('/:companyId/incidents', async (req, res) => {
             {
                 to: token,
                 title: `Nueva alerta de incidente`,
-                body: `Se ha registrado un nuevo incidente en el área de ${incidentData.areaName} por la IA`,
+                body: `Se ha registrado un nuevo incidente en el área de ${newIncident.areaName} por la IA`,
             },
         ]);
       }
@@ -71,14 +74,12 @@ router.post('/:companyId/incidents', async (req, res) => {
               {
                   to: token,
                   title: `Nueva alerta de incidente`,
-                  body: `Se ha registrado un nuevo incidente en el área de ${incidentData.areaName} por ${incidentData.supervisor}`,
+                  body: `Se ha registrado un nuevo incidente en el área de ${newIncident.areaName} por ${newIncident.supervisor}`,
               },
           ]);
         }
     }
-    // Agregar el incidente a la base de datos
-    const newIncident = await Incident.addIncident(companyId, incidentData);
-    res.json(newIncident);
+
   } catch (error) {
     console.error("Error al agregar el incidente:", error);
     res.status(500).json({ message: "Surgió un error al crear el incidente" });
