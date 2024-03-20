@@ -39,7 +39,6 @@ router.post('/:companyId/incidents', async (req, res) => {
 
   try {
     const tokens = await Token.getTokensByCompanyId(companyId);
-    console.log("Tokens:", tokens);
     // Verificar si hay una imagen en la solicitud
     if (incidentData.imageUrls && incidentData.imageUrls.length > 0) {
       // Subir la imagen a Cloudinary si está presente
@@ -50,26 +49,26 @@ router.post('/:companyId/incidents', async (req, res) => {
     }
 
     if (!incidentData.supervisor) {
-      for (let token of tokens) {
-        if (!Expo.isExpoPushToken(token)) {
-            throw new Error(`Push token ${token} is not a valid Expo push token`);
+      for (let tokencito of tokens) {
+        if (!Expo.isExpoPushToken(tokencito)) {
+            throw new Error(`Push token ${tokencito} is not a valid Expo push token`);
         }
         expo.sendPushNotificationsAsync([
             {
-                to: token,
+                to: tokencito.token,
                 title: `Nueva alerta de incidente`,
                 body: `Se ha registrado un nuevo incidente en el área de ${incidentData.areaName} por la IA`,
             },
         ]);
       }
     } else {
-        for (let token of tokens) {
-          if (!Expo.isExpoPushToken(token)) {
-              throw new Error(`Push token ${token} is not a valid Expo push token`);
+        for (let tokencito of tokens) {
+          if (!Expo.isExpoPushToken(tokencito)) {
+              throw new Error(`Push token ${tokencito} is not a valid Expo push token`);
           }
           expo.sendPushNotificationsAsync([
               {
-                  to: token,
+                  to: tokencito.token,
                   title: `Nueva alerta de incidente`,
                   body: `Se ha registrado un nuevo incidente en el área de ${incidentData.areaName} por ${incidentData.supervisor}`,
               },
