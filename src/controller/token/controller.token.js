@@ -13,7 +13,7 @@ router.post('/:companyId/tokens', async (req, res) => {
     try {
         const tokens = await Token.getTokensByCompanyId(companyId);
         const listTokens = tokens.map(token => token.token);
-        if (!listTokens.includes(tokenData)) {
+        if (listTokens && listTokens.includes(tokenData)) {
             throw new Error('Token ya existe');
         } else {
             const newToken = await Token.addToken(companyId, tokenData);
