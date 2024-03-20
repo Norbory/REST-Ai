@@ -11,8 +11,14 @@ router.post('/:companyId/tokens', async (req, res) => {
     const tokenData = req.body;
 
     try {
-        const newToken = await Token.addToken(companyId, tokenData);
-        res.status(201).json(newToken);
+        const tokens = await Token.getTokensByCompanyId(companyId);
+        const listTokens = tokens.map(token => token.token);
+        if (listTokens.includes(tokenData)) {
+            throw new Error('Token ya existe');
+        } else {
+            const newToken = await Token.addToken(companyId, tokenData);
+            res.status(201).json(newToken);
+        }
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -23,8 +29,15 @@ router.delete('/:companyId/tokens/:tokenId', async (req, res) => {
     const tokenId = req.params.tokenId;
 
     try {
-        await Token.deleteToken(companyId, tokenId);
-        res.status(204).send();
+        const tokens = await Token.getTokensByCompanyId(companyId);
+        const listIds = tokens.map(token => token._id);
+        if (!listIds.includes(tokenId)) {
+            throw new Error('Id de token no existe');
+        } else{
+            await Token.deleteToken(companyId, tokenId);
+            res.status(204).send();
+        }
+        
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
