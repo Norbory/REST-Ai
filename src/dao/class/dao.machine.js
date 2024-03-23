@@ -41,4 +41,4 @@ class MachineDAO {
     }
 };
 
-module.exports = router;
+module.exports = MachineDAO;
