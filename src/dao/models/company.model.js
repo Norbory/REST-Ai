@@ -8,6 +8,17 @@ const jetsonSchema = new mongoose.Schema({
   ID_Area: {type:mongoose.Schema.Types.ObjectId, required: true},
 });
 
+const machineSchema = new mongoose.Schema({
+  Error: {type: Boolean, required: true},
+  Code: {type: String, required: true},
+  RAM: {type: String, required: true},
+  GPU: {type: String, required: true},
+  date: {
+    type: Date,
+    default: () => new Date(new Date().toLocaleString("en-US", { timeZone: "America/Lima" }))
+  },
+});
+
 const reportSchema = new mongoose.Schema({
   incidentId: {type:mongoose.Schema.Types.ObjectId, required: false},
   Nombre: {type: String, required: false},
@@ -116,6 +127,10 @@ const companySchema = new mongoose.Schema({
   },
   incidents: {
     type: [incidentSchema],
+    default: []
+  },
+  machines: {
+    type: [machineSchema],
     default: []
   },
   date: {
