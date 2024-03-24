@@ -15,13 +15,14 @@ router.get('/:companyId/machines', async (req, res) => {
     }
 }
 );
+
 router.post('/:companyId/machines', async (req, res) => {
     const companyId = req.params.companyId;
     const machineData = req.body;
 
     try {
         const newMachine = await Machine.addMachine(companyId, machineData);
-        res.status(201).json(newMachine);
+        res.status(201).json({machine:newMachine, message: 'Oe parala pe causa. Todo el dia reportando huevadas.'});
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
