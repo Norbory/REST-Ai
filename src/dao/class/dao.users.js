@@ -46,6 +46,7 @@ class UserDAO {
         username: userData.username,
         password: createHash(userData.password),
         DNI: userData.DNI,
+        numContact: userData.numContact,
       };
 
       company.users.push(newUser);

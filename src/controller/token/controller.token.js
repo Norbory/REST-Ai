@@ -11,8 +11,19 @@ router.post('/:companyId/tokens', async (req, res) => {
     const tokenData = req.body;
 
     try {
-        const newToken = await Token.addToken(companyId, tokenData);
-        res.status(201).json(newToken);
+        const tokens = await Token.getTokensByCompanyId(companyId);
+        const listTokens = tokens.map(token => token.token);
+        if (listTokens) {
+            if (listTokens.includes(tokenData.token)){
+                throw new Error('Token ya existe');
+            } else {
+                const newToken = await Token.addToken(companyId, tokenData);
+                res.status(201).json(newToken);
+            }
+        } else {
+            const newToken = await Token.addToken(companyId, tokenData);
+            res.status(201).json(newToken);
+        }
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
