@@ -71,6 +71,9 @@ class UserDAO {
 
       user.role = newData.role;
       user.Name = newData.Name;
+      user.email = newData.email;
+      user.DNI = newData.DNI;
+      user.numContact = newData.numContact;
 
       await company.save();
       return user;
