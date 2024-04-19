@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./src/app",
-    "build": "babel src -d dist"
+    "build": "tsc",
+    "vercel-build": "echo 'vercel-build'"
   },
   "author": "",
   "license": "ISC",

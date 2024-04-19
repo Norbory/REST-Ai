@@ -2,3 +2,4 @@
 .env
 /src/constantes/secret.ts
 dist
+.vercel
