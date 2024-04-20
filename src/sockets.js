@@ -5,6 +5,10 @@ const sockets = (io) => {
         socket.on('disconnect', () => {
             console.log('user disconnected');
         });
+
+        socket.on('client:chat message', (msg)=>{
+            io.emit('server:chat message', msg);
+        })
     });
 };
 

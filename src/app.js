@@ -12,6 +12,9 @@ console.log('listening on port ' + port)
 const io = new Server(httpserver, {
     cors: {
       origin: '*',
+    },
+    connectionStateRecovery: {
+      connectionTimeout: 5000
     }
   });
 sockets(io);
