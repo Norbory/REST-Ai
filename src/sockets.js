@@ -6,7 +6,8 @@ const sockets = (io) => {
             console.log('user disconnected');
         });
 
-        socket.on('client:chat message', (msg)=>{
+        socket.on('client:chat message', (msg,userName)=>{
+            console.log("mensaje recibido: ",msg, " de ",userName);
             io.emit('server:chat message', msg);
         })
     });
