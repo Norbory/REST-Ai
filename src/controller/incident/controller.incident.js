@@ -86,6 +86,15 @@ router.post('/:companyId/incidents', async (req, res) => {
   }
 });
 
+// Postear imagen a cloudinary de un file en el body
+router.post('/uploadImage', async (req, res) => {
+  try {
+    cloudinary.v2.uploader.upload(req.body.uploadImage).then(result=>console.log(result));
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 
 // Actualizar un incidente existente
 router.put('/:companyId/incidents/:incidentId', async (req, res) => {
