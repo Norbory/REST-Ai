@@ -86,15 +86,52 @@ router.post('/:companyId/incidents', async (req, res) => {
   }
 });
 
-// Postear imagen a cloudinary de un file en el body
-router.post('/uploadImage', async (req, res) => {
+// Postear incidente con url de imagen
+router.post('/:companyId/incidents/image', async (req, res) => {
+  const companyId = req.params.companyId;
+  const incidentData = req.body;
+  // Verificar si hay datos de incidente en la solicitud
+  if (!incidentData) {
+    return res.status(400).json({ message: "Datos de entrada inválidos" });
+  }
   try {
-    cloudinary.v2.uploader.upload(req.body.uploadImage).then(result=>console.log(result));
+    const tokens = await Token.getTokensByCompanyId(companyId);
+    const listTokens = tokens.map(token => token.token);
+    const newIncident = await Incident.addIncident(companyId, incidentData);
+    res.json(newIncident);
+    if (!newIncident.supervisor) {
+      for (let token of listTokens) {
+        if (!Expo.isExpoPushToken(token)) {
+            throw new Error(`Push token ${token} is not a valid Expo push token`);
+        }
+        expo.sendPushNotificationsAsync([
+            {
+                to: token,
+                title: `Nueva alerta de incidente`,
+                body: `Se ha registrado un nuevo incidente en el área de ${newIncident.areaName} por la IA`,
+            },
+        ]);
+      }
+    } else {
+        for (let token of listTokens) {
+          if (!Expo.isExpoPushToken(token)) {
+              throw new Error(`Push token ${token} is not a valid Expo push token`);
+          }
+          expo.sendPushNotificationsAsync([
+              {
+                  to: token,
+                  title: `Nueva alerta de incidente`,
+                  body: `Se ha registrado un nuevo incidente en el área de ${newIncident.areaName} por ${newIncident.supervisor}`,
+              },
+          ]);
+        }
+    }
+
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("Error al agregar el incidente:", error);
+    res.status(500).json({ message: "Surgió un error al crear el incidente" });
   }
 });
-
 
 // Actualizar un incidente existente
 router.put('/:companyId/incidents/:incidentId', async (req, res) => {
