@@ -126,7 +126,6 @@ router.post('/:companyId/incidents/image', async (req, res) => {
           ]);
         }
     }
-
   } catch (error) {
     console.error("Error al agregar el incidente:", error);
     res.status(500).json({ message: "Surgió un error al crear el incidente" });
