@@ -1,7 +1,7 @@
 require('dotenv').config()
 
 const config ={
-    port : process.env.PORT,
+    port : process.env.PORT || 5000,
     jwtSecret: process.env.JWT_SECRET || "somesecrettoken",
     mongoDB : process.env.MONGODB,
     CLOUD_NAME: process.env.CLOUDINARY_NAME,
