@@ -6,7 +6,7 @@ const sockets = require('./sockets');
 const { Server } = require('socket.io');
 
 const servidor = http.createServer(app);
-const httpserver = servidor.listen(port);
+const httpserver = servidor.listen(port || 5000);
 console.log('listening on port ' + port)
 
 const io = new Server(httpserver, {
