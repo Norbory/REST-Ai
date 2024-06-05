@@ -69,13 +69,39 @@ class UserDAO {
         throw new Error('Usuario no encontrado');
       }
 
+      user.role = newData.role;
+      user.Name = newData.Name;
+      user.email = newData.email;
+      user.DNI = newData.DNI;
+      user.numContact = newData.numContact;
+
+      await company.save();
+      return user;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Actualiza solo los campos dados de un usuario
+  async patchUser(companyId, userId, newData) {
+    try {
+      const company = await Company.findById(companyId);
+      if (!company) {
+        throw new Error('Compañía no encontrada');
+      }
+
+      const user = company.users.find(user => user._id.toString() === userId);
+      if (!user) {
+        throw new Error('Usuario no encontrado');
+      }
+
       user.role = newData.role || user.role;
       user.Name = newData.Name || user.Name;
       user.email = newData.email || user.email;
       user.DNI = newData.DNI || user.DNI;
       user.numContact = newData.numContact || user.numContact;
       user.username = newData.username || user.username;
-      user.password = createHash(newData.password) || user.password;
+      user.password = newData.password ? createHash(newData.password) : user.password;
 
       await company.save();
       return user;

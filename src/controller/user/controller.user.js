@@ -54,6 +54,20 @@ router.put('/:companyId/users/:userId', async (req, res) => {
   }
 });
 
+// Actualiza solo los campos dados de un usuario
+router.patch('/:companyId/users/:userId', async (req, res) => {
+  const companyId = req.params.companyId;
+  const userId = req.params.userId;
+  const newData = req.body;
+
+  try {
+    const updatedUser = await User.patchUser(companyId, userId, newData);
+    res.json(updatedUser);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // Eliminar un usuario por su ID
 router.delete('/:companyId/users/:userId', async (req, res) => {
   const companyId = req.params.companyId;
