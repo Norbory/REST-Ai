@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./src/app",
     "build": "tsc",
+    "dev": "nodemon ./src/app",
     "vercel-build": "echo 'vercel-build'"
   },
   "author": "",
@@ -35,6 +36,7 @@
   "devDependencies": {
     "@babel/cli": "^7.24.1",
     "@babel/core": "^7.24.4",
-    "@babel/preset-env": "^7.24.4"
+    "@babel/preset-env": "^7.24.4",
+    "nodemon": "^3.1.3"
   }
 }
