@@ -69,11 +69,13 @@ class UserDAO {
         throw new Error('Usuario no encontrado');
       }
 
-      user.role = newData.role;
-      user.Name = newData.Name;
-      user.email = newData.email;
-      user.DNI = newData.DNI;
-      user.numContact = newData.numContact;
+      user.role = newData.role || user.role;
+      user.Name = newData.Name || user.Name;
+      user.email = newData.email || user.email;
+      user.DNI = newData.DNI || user.DNI;
+      user.numContact = newData.numContact || user.numContact;
+      user.username = newData.username || user.username;
+      user.password = createHash(newData.password) || user.password;
 
       await company.save();
       return user;
