@@ -105,6 +105,10 @@ const incidentSchema = new mongoose.Schema({
     }
   ],
   supervisor: {type: String, required: false},
+  ModifyDate: {
+    type: Date,
+    default: () => new Date(new Date().toLocaleString("en-US", { timeZone: "America/Lima" }))
+  },
 });
 
 const companySchema = new mongoose.Schema({

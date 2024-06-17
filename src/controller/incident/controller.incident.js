@@ -26,6 +26,17 @@ router.get('/:companyId/incidents', async (req, res) => {
   }
 });
 
+// Get all deleted incidents by company
+router.get('/:companyId/incidents/deleted', async (req, res) => {
+  const companyId = req.params.companyId;
+  try {
+    const incidents = await Incident.getIncidentsDeletedByCompanyId(companyId);
+    res.json(incidents);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 //SP32 manda información de incidente a cloudinary y luego a la base de datos
 router.post('/:companyId/incidents', async (req, res) => {
   let url = [];
@@ -139,6 +150,7 @@ router.put('/:companyId/incidents/:incidentId', async (req, res) => {
   const newData = req.body;
   try {
     const updatedIncident = await Incident.updateIncident(companyId, incidentId, newData);
+    updatedIncident.ModifyDate = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Lima" }));
     // Enviar la respuesta HTTP con los datos actualizados
     res.json(updatedIncident);
   } catch (error) {

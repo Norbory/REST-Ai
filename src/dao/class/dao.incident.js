@@ -1,15 +1,51 @@
 const {Company} = require('../models/company.model');
+let cache = {};
 
 class IncidentDAO {
+  // Metodo para obtener lista de incidentes
   async getIncidentsByCompanyId(companyId) {
+    const cachedData = cache[companyId];
+    if (cachedData) {
+      // Every 10 minutes in milliseconds
+      const oneHour = 10 * 60 * 1000;
+      const now = Date.now();
+      if (now - cachedData.timestamp < oneHour) {
+        return cachedData.data;
+      }
+    }
     try {
       const company = await Company.findById(companyId);
-      return company.incidents;
+      if (!company) {
+        throw new Error('Compañía no encontrada');
+      }
+      const incidentsSorted = company.incidents.sort((a, b) => new Date(b.date) - new Date(a.date));
+      // Update the cache with the new data and the current timestamp
+      cache[companyId] = {
+        data: incidentsSorted,
+        timestamp: Date.now()
+      };
+      return incidentsSorted;
     } catch (error) {
       throw error;
     }
   }
 
+  // Metodo para obtener lista de incidentes Deleted
+  async getIncidentsDeletedByCompanyId(companyId) {
+    try {
+      const company = await Company.findById(companyId);
+      if (!company) {
+        throw new Error('Compañía no encontrada');
+      }
+      const incidentsDeleted = company.incidents.filter(incident => incident.Deleted);
+      const incidentsSorted = incidentsDeleted.sort((a, b) => new Date(b.ModifyDate) - new Date(a.ModifyDate));
+      return incidentsSorted;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Metodo para añadir un incidente
   async addIncident(companyId, incidentData) {
     try {
       const company = await Company.findById(companyId);
@@ -21,6 +57,7 @@ class IncidentDAO {
     }
   }
 
+  // Metodo para actualizar un incidente
   async updateIncident(companyId, incidentId, newData) {
     try {
       const company = await Company.findById(companyId);
@@ -35,6 +72,7 @@ class IncidentDAO {
     }
   }
 
+  // Metodo para eliminar un incidente
   async deleteIncident(companyId, incidentId) {
     try {
       const company = await Company.findById(companyId);
