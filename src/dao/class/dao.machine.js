@@ -3,7 +3,7 @@ const {Company} = require('../models/company.model');
 class MachineDAO {
     async getMachinesByCompanyId(companyId) {
         try {
-            const company = await Company.findById(companyId);
+            const company = await Company.findById(companyId, 'machines');
             return company.machines;
         }
         catch (error) {

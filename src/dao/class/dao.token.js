@@ -3,7 +3,7 @@ const {Company} = require('../models/company.model');
 class TokenDAO {
     async getTokensByCompanyId(companyId) {
         try {
-            const company = await Company.findById(companyId);
+            const company = await Company.findById(companyId, 'tokens');
             return company.tokens;
         }
         catch (error) {

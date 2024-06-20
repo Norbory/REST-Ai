@@ -14,7 +14,7 @@ class IncidentDAO {
       }
     }
     try {
-      const company = await Company.findById(companyId);
+      const company = await Company.findById(companyId, 'incidents');
       if (!company) {
         throw new Error('Compañía no encontrada');
       }

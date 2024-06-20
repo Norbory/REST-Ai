@@ -12,7 +12,7 @@ class AreaDAO {
       }
     }
     try {
-      const company = await Company.findById(companyId);
+      const company = await Company.findById(companyId, 'areas');
       if (!company) {
         throw new Error('Compañía no encontrada');
       }
@@ -29,7 +29,7 @@ class AreaDAO {
 
   async getAreaById(companyId, areaId) {
     try {
-      const company = await Company.findById(companyId);
+      const company = await Company.findById(companyId, 'areas');
       if (!company) {
         throw new Error('Compañía no encontrada');
       }
