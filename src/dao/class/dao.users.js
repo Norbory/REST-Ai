@@ -14,7 +14,7 @@ class UserDAO {
       }
     }
     try {
-      const company = await Company.findById(companyId, 'users');
+      const company = await Company.findById(companyId, 'users -_id');
       if (!company) {
         throw new Error('Compañía no encontrada');
       }

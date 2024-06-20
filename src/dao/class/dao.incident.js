@@ -14,7 +14,7 @@ class IncidentDAO {
       }
     }
     try {
-      const company = await Company.findById(companyId, 'incidents');
+      const company = await Company.findById(companyId, 'incidents -_id');
       if (!company) {
         throw new Error('Compañía no encontrada');
       }
@@ -33,7 +33,7 @@ class IncidentDAO {
   // Metodo para obtener lista de incidentes Deleted
   async getIncidentsDeletedByCompanyId(companyId) {
     try {
-      const company = await Company.findById(companyId);
+      const company = await Company.findById(companyId, 'incidents -_id');
       if (!company) {
         throw new Error('Compañía no encontrada');
       }
@@ -48,7 +48,7 @@ class IncidentDAO {
   // Metodo para añadir un incidente
   async addIncident(companyId, incidentData) {
     try {
-      const company = await Company.findById(companyId);
+      const company = await Company.findById(companyId, 'incidents -_id');
       company.incidents.push(incidentData);
       const savedCompany = await company.save();
       return savedCompany.incidents[savedCompany.incidents.length - 1];
@@ -60,7 +60,7 @@ class IncidentDAO {
   // Metodo para actualizar un incidente
   async updateIncident(companyId, incidentId, newData) {
     try {
-      const company = await Company.findById(companyId);
+      const company = await Company.findById(companyId , 'incidents -_id');
       const incident = company.incidents.id(incidentId);
       if (!incident) throw new Error('Incident not found');
       
@@ -75,7 +75,7 @@ class IncidentDAO {
   // Metodo para eliminar un incidente
   async deleteIncident(companyId, incidentId) {
     try {
-      const company = await Company.findById(companyId);
+      const company = await Company.findById(companyId , 'incidents -_id');
       const incidentIndex = company.incidents.findIndex(incident => incident._id.toString() === incidentId);
       if (incidentIndex === -1) {
         throw new Error('Incident not found');
