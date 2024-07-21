@@ -37,6 +37,18 @@ router.get('/:companyId/incidents/deleted', async (req, res) => {
   }
 });
 
+// Get specific incident by ID
+router.get('/:companyId/incidents/:id', async (req, res) => {
+  const companyId = req.params.companyId;
+  const incidentId = req.params.id;
+  try {
+    const incident = await Incident.getIncidentById(companyId, incidentId);
+    res.json(incident);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 //SP32 manda información de incidente a cloudinary y luego a la base de datos
 router.post('/:companyId/incidents', async (req, res) => {
   let url = [];
@@ -150,9 +162,7 @@ router.put('/:companyId/incidents/:incidentId', async (req, res) => {
   const newData = req.body;
   try {
     const updatedIncident = await Incident.updateIncident(companyId, incidentId, newData);
-    updatedIncident.ModifyDate = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Lima" }));
-    // Enviar la respuesta HTTP con los datos actualizados
-    res.json(updatedIncident);
+    res.status(204).json(updatedIncident);
   } catch (error) {
     res.status(500).json({ message: error.message + "Error al actualizar el incidente"});
   }
