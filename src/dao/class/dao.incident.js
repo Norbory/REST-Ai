@@ -38,7 +38,7 @@ class IncidentDAO {
         throw new Error('Compañía no encontrada');
       }
       const incidentsDeleted = company.incidents.filter(incident => incident.Deleted);
-      const incidentsSorted = incidentsDeleted.sort((a, b) => new Date(b.ModifyDate) - new Date(a.ModifyDate));
+      const incidentsSorted = incidentsDeleted.sort((a, b) => new Date(b.date) - new Date(a.date));
       return incidentsSorted;
     } catch (error) {
       throw error;
@@ -48,7 +48,7 @@ class IncidentDAO {
   // Metodo para añadir un incidente
   async addIncident(companyId, incidentData) {
     try {
-      const company = await Company.findById(companyId, 'incidents -_id');
+      const company = await Company.findById(companyId, 'incidents');
       company.incidents.push(incidentData);
       const savedCompany = await company.save();
       return savedCompany.incidents[savedCompany.incidents.length - 1];
