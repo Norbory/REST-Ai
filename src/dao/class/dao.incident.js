@@ -1,3 +1,4 @@
+const { set } = require('mongoose');
 const {Company} = require('../models/company.model');
 let cache = {};
 
@@ -45,6 +46,24 @@ class IncidentDAO {
     }
   }
 
+  // Metodo para obtener un incidente por ID
+  async getIncidentById(companyId, incidentId) {
+    try {
+      const company = await Company.findById(companyId, 'incidents -_id');
+      if (!company) {
+        throw new Error('Compañía no encontrada');
+      }
+      const incidentIndex = company.incidents.findIndex(incident => incident._id.toString() === incidentId);
+      if (incidentIndex === -1) {
+        throw new Error('Incident not found');
+      }
+      const incident = company.incidents[incidentIndex];
+      return incident;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   // Metodo para añadir un incidente
   async addIncident(companyId, incidentData) {
     try {
@@ -60,12 +79,17 @@ class IncidentDAO {
   // Metodo para actualizar un incidente
   async updateIncident(companyId, incidentId, newData) {
     try {
-      const company = await Company.findById(companyId , 'incidents -_id');
-      const incident = company.incidents.id(incidentId);
-      if (!incident) throw new Error('Incident not found');
-      
-      incident.set(newData);
-      const savedCompany = await company.save();
+      const company = await Company.findById(companyId , 'incidents');
+      if (!company) {
+        throw new Error('Compañía no encontrada');
+      }
+      const incidentIndex = company.incidents.findIndex(incident => incident._id.toString() === incidentId);
+      if (incidentIndex === -1) {
+        throw new Error('Incident not found');
+      }
+      company.incidents[incidentIndex].set(newData);
+      const incident= company.incidents[incidentIndex];
+      await company.save();
       return incident;
     } catch (error) {
       throw error;
@@ -75,7 +99,7 @@ class IncidentDAO {
   // Metodo para eliminar un incidente
   async deleteIncident(companyId, incidentId) {
     try {
-      const company = await Company.findById(companyId , 'incidents -_id');
+      const company = await Company.findById(companyId , 'incidents');
       const incidentIndex = company.incidents.findIndex(incident => incident._id.toString() === incidentId);
       if (incidentIndex === -1) {
         throw new Error('Incident not found');
@@ -89,7 +113,7 @@ class IncidentDAO {
 
   async getIncidentsByCompanyIdAndDate(companyId, date) {
     try {
-      const company = await Company.findById(companyId);
+      const company = await Company.findById(companyId, 'incidents');
       const incidents = company.incidents.filter(incident => {
         const incidentDate = new Date(incident.date);
         return incidentDate.toISOString().slice(0, 10) === date.toISOString().slice(0, 10);
