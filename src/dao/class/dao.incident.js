@@ -1,30 +1,28 @@
-const { set } = require('mongoose');
 const {Company} = require('../models/company.model');
-let cache = {};
-
 class IncidentDAO {
   // Metodo para obtener lista de incidentes
   async getIncidentsByCompanyId(companyId) {
-    const cachedData = cache[companyId];
-    if (cachedData) {
-      // Every 10 minutes in milliseconds
-      const oneHour = 10 * 60 * 1000;
-      const now = Date.now();
-      if (now - cachedData.timestamp < oneHour) {
-        return cachedData.data;
-      }
-    }
     try {
       const company = await Company.findById(companyId, 'incidents -_id');
       if (!company) {
         throw new Error('Compañía no encontrada');
       }
       const incidentsSorted = company.incidents.sort((a, b) => new Date(b.date) - new Date(a.date));
-      // Update the cache with the new data and the current timestamp
-      cache[companyId] = {
-        data: incidentsSorted,
-        timestamp: Date.now()
-      };
+      return incidentsSorted;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Metodo para obtener lista de incidentes Not Deleted
+  async getIncidentsNotDeletedByCompanyId(companyId) {
+    try {
+      const company = await Company.findById(companyId, 'incidents -_id');
+      if (!company) {
+        throw new Error('Compañía no encontrada');
+      }
+      const incidentsNotDeleted = company.incidents.filter(incident => !incident.Deleted);
+      const incidentsSorted = incidentsNotDeleted.sort((a, b) => new Date(b.date) - new Date(a.date));
       return incidentsSorted;
     } catch (error) {
       throw error;

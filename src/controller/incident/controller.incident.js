@@ -26,6 +26,17 @@ router.get('/:companyId/incidents', async (req, res) => {
   }
 });
 
+// Get all not deleted incidents by company
+router.get('/:companyId/incidents/notdeleted', async (req, res) => {
+  const companyId = req.params.companyId;
+  try {
+    const incidents = await Incident.getIncidentsNotDeletedByCompanyId(companyId);
+    res.json(incidents);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // Get all deleted incidents by company
 router.get('/:companyId/incidents/deleted', async (req, res) => {
   const companyId = req.params.companyId;
