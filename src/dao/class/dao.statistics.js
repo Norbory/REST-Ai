@@ -49,6 +49,130 @@ class StatsDAO {
     }
   }
 
+  // Get statistics by company sorted by month
+  async getStatisticsByCompanyIdEachMonth(companyId) {
+    try {
+      const company = await Company.findById(companyId);
+      if (!company) {
+        throw new Error('Compañía no encontrada');
+      }
+
+      let Cuentas = {
+        Mes: [],
+      };
+
+      const incidentsByYear = company.incidents.filter(incident => incident.date.getFullYear() === new Date().getFullYear());
+
+      const incidentsByMonth = incidentsByYear.reduce((acc, incident) => {
+        const month = incident.date.getMonth();
+        acc[month] = acc[month] || [];
+        acc[month].push(incident);
+        return acc;
+      }, []);
+
+      Cuentas.Mes = incidentsByMonth.map((incidents, index) => {
+        let CuentasMes = {
+          nombre: new Date(2024, index).toLocaleString('es-ES', { month: 'long' }),
+          Registrados: 0,
+          Amonestados: 0,
+          Descartados: 0,
+          Casco: 0,
+          Chaleco: 0,
+          Guantes: 0,
+          Lentes: 0,
+          Orejeras: 0,
+          Respirador: 0,
+          Total: 0
+        };
+
+        incidents.forEach(incident => {
+          CuentasMes.Total++;
+          if (incident.Deleted) {
+            CuentasMes.Descartados++;
+            if (incident.Reported) {
+              CuentasMes.Amonestados++;
+            }
+          } else {
+            CuentasMes.Registrados++;
+          }
+
+          incident.EPPs.forEach(epp => {
+            if (CuentasMes.hasOwnProperty(epp)) {
+              CuentasMes[epp]++;
+            }
+          });
+        });
+
+        return CuentasMes;
+      });
+      
+      return Cuentas;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Get incidents by intervals of 5 days each month
+  // 1-5, 6-10, 11-15, 16-20, 21-25, 26-End
+  async getIncidentsByIntervals(companyId) {
+    try {
+      const company = await Company.findById(companyId);
+      if (!company) {
+        throw new Error('Compañía no encontrada');
+      }
+
+      let Cuentas = {
+        Mes: [],
+      };
+
+      const incidentsByYear = company.incidents.filter(incident => incident.date.getFullYear() === new Date().getFullYear());
+
+      const incidentsByMonth = incidentsByYear.reduce((acc, incident) => {
+        const month = incident.date.getMonth();
+        acc[month] = acc[month] || [];
+        acc[month].push(incident);
+        return acc;
+      }, []);
+
+      Cuentas.Mes = incidentsByMonth.map((incidents, index) => {
+        let CuentasMes = {
+          nombre: new Date(2024, index).toLocaleString('es-ES', { month: 'long' }),
+          '1-5': 0,
+          '6-10': 0,
+          '11-15': 0,
+          '16-20': 0,
+          '21-25': 0,
+          '26-End': 0,
+          Total: 0
+        };
+
+        incidents.forEach(incident => {
+          CuentasMes.Total++;
+          const day = incident.date.getDate();
+          if (day <= 5) {
+            CuentasMes['1-5']++;
+          } else if (day <= 10) {
+            CuentasMes['6-10']++;
+          } else if (day <= 15) {
+            CuentasMes['11-15']++;
+          } else if (day <= 20) {
+            CuentasMes['16-20']++;
+          } else if (day <= 25) {
+            CuentasMes['21-25']++;
+          } else {
+            CuentasMes['26-End']++;
+          }
+        });
+
+        return CuentasMes;
+      });
+
+      return Cuentas;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   // Get statistics by user's company (for Supervisor)
   async getStatisticsByUserCompany(companyId, userId) {
     const cachedData = cacheUserCompany[companyId];

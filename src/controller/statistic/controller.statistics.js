@@ -26,6 +26,28 @@ router.get('/:companyId/statistics/:userId', async (req, res) => {
   }
 });
 
+// Get statistics by company by each month
+router.get('/:companyId/stats/month', async (req, res) => {
+  const companyId = req.params.companyId;
+  try {
+    const statistics = await Statistics.getStatisticsByCompanyIdEachMonth(companyId);
+    res.json(statistics);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Get stats by intervals of 5 days each month during current year
+router.get('/:companyId/stats/interval' , async (req, res) => {
+  const companyId = req.params.companyId;
+  try {
+    const statistics = await Statistics.getIncidentsByIntervals(companyId);
+    res.json(statistics);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // Get all statistics by user's company by each month
 router.get('/:companyId/statistics/:userId/month', async (req, res) => {
   const companyId = req.params.companyId;
