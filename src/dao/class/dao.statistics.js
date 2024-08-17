@@ -15,7 +15,7 @@ class StatsDAO {
       }
     }
     try {
-      const company = await Company.findById(companyId);
+      const company = await Company.findById(companyId, 'incidents -_id');
       if (!company) {
         throw new Error('Compañía no encontrada');
       }
@@ -116,7 +116,7 @@ class StatsDAO {
   // 1-5, 6-10, 11-15, 16-20, 21-25, 26-End
   async getIncidentsByIntervals(companyId) {
     try {
-      const company = await Company.findById(companyId);
+      const company = await Company.findById(companyId, 'incidents -_id');
       if (!company) {
         throw new Error('Compañía no encontrada');
       }
@@ -175,21 +175,12 @@ class StatsDAO {
 
   // Get statistics by user's company (for Supervisor)
   async getStatisticsByUserCompany(companyId, userId) {
-    const cachedData = cacheUserCompany[companyId];
-    if (cachedData) {
-      // Every hour in milliseconds
-      const oneHour = 60 * 60 * 1000;
-      const now = Date.now();
-      if (now - cachedData.timestamp < oneHour) {
-        return cachedData.data;
-      }
-    }
     try {
-      const company = await Company.findById(companyId);
+      const company = await Company.findById(companyId, 'incidents users -_id');
       if (!company) {
         throw new Error('Compañía no encontrada');
       }
-      const user = company.users.id(userId);
+      const user = company.users.id(userId, 'name -_id');
       if (!user) {
         throw new Error('Usuario no encontrado');
       }
@@ -222,11 +213,32 @@ class StatsDAO {
           }
         });
       });
-      // Cache the result
-      cacheUserCompany[companyId] = {
-        data: Cuentas,
-        timestamp: Date.now()
-      };
+      return Cuentas;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Get statistics by all areas by each month
+  async getStatisticsByAreasEachMonth(companyId) {
+    try {
+      const company = await Company.findById(companyId, 'incidents areas -_id');
+      if (!company) {
+        throw new Error('Compañía no encontrada');
+      }
+      const incidentsByYear = company.incidents.filter(incident => incident.date.getFullYear() === new Date().getFullYear());
+      const areas = company.areas;
+      
+      let Cuentas = {};
+
+      // Count total of incidents by each area
+      areas.forEach(area => {
+        Cuentas[area.Name] = incidentsByYear.filter(incident => incident.areaName === area.Name).length;
+      });
+
+      // Count total of non area incidents
+      Cuentas['Sin Área'] = incidentsByYear.filter(incident => !incident.areaName).length;
+
       return Cuentas;
     } catch (error) {
       throw error;

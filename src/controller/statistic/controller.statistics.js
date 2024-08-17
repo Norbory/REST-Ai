@@ -48,6 +48,17 @@ router.get('/:companyId/stats/interval' , async (req, res) => {
   }
 });
 
+// Get all statistics by all areas by each month
+router.get('/:companyId/stats/areas', async (req, res) => {
+  const companyId = req.params.companyId;
+  try {
+    const statistics = await Statistics.getStatisticsByAreasEachMonth(companyId);
+    res.json(statistics);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+ 
 // Get all statistics by user's company by each month
 router.get('/:companyId/statistics/:userId/month', async (req, res) => {
   const companyId = req.params.companyId;
