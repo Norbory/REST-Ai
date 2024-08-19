@@ -5,15 +5,7 @@ let cacheUserCompanyEachMonth = {};
 class StatsDAO {
   // Get statistics by company
   async getStatisticsByCompanyId(companyId) {
-    const cachedData = cache[companyId];
-    if (cachedData) {
-      // Every hour in milliseconds
-      const oneHour = 60 * 60 * 1000;
-      const now = Date.now();
-      if (now - cachedData.timestamp < oneHour) {
-        return cachedData.data;
-      }
-    }
+
     try {
       const company = await Company.findById(companyId, 'incidents -_id');
       if (!company) {
@@ -36,13 +28,7 @@ class StatsDAO {
           }
         });
       });
-
-      // Update the cache with the new data and the current timestamp
-      cache[companyId] = {
-        data: Cuentas,
-        timestamp: Date.now()
-      };
-
+      
       return Cuentas;
     } catch (error) {
       throw error;
@@ -247,15 +233,7 @@ class StatsDAO {
 
   // Get statistics by user's company sorted by month (for User)
   async getStatisticsByUserCompanyEachMonth (companyId, userId) {
-    const cachedData = cacheUserCompanyEachMonth[companyId];
-    if (cachedData) {
-      // Every hour in milliseconds
-      const oneHour = 60 * 60 * 1000;
-      const now = Date.now();
-      if (now - cachedData.timestamp < oneHour) {
-        return cachedData.data;
-      }
-    }
+    
     try {
       const company = await Company.findById(companyId);
       if (!company) {
@@ -320,11 +298,7 @@ class StatsDAO {
   
         return CuentasMes;
       });
-      // Cache the result
-      cacheUserCompanyEachMonth[companyId] = {
-        data: Cuentas,
-        timestamp: Date.now()
-      };
+
       return Cuentas;
     } catch (error) {
       throw error;
