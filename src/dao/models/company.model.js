@@ -74,7 +74,7 @@ const userSchema = new mongoose.Schema({
   password: {type: String, required: true},
   role: {type:String,required: true},
   telegramID: {type:String, required: false},
-  email: {type:String, required: false},
+  email: {type:String, required: false, unique: true},
   DNI: {type:String, required: false},
   numContact: {type:String, required: false},
 });

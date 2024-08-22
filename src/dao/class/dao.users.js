@@ -20,16 +20,15 @@ class UserDAO {
   async getUserByCompanyId(companyId, userId) {
    
     try {
-      const company = await Company.findById(companyId);
-      if (!company) {
-        throw new Error('Compañía no encontrada');
-      }
-
-      const user =  company.users.find(user => user._id.toString() === userId);
+      const user = await Company.findOne({ _id: companyId, 'users._id': userId }, { 'users.$': 1 });
+      // const company = await Company.findById(companyId, 'users');
+      // if (!company) {
+      //   throw new Error('Compañía no encontrada');
+      // }
       if (!user) {
         throw new Error('Usuario no encontrado');
       }
-      return user;
+      return user.users[0];
     } catch (error) {
       console.log(error);
       throw error;
@@ -38,7 +37,7 @@ class UserDAO {
 
   async addUser(companyId, userData) {
     try {
-      const company = await Company.findById(companyId);
+      const company = await Company.findById(companyId, 'users');
       if (!company) {
         throw new Error('Compañía no encontrada');
       }
@@ -64,7 +63,7 @@ class UserDAO {
 
   async updateUser(companyId, userId, newData) {
     try {
-      const company = await Company.findById(companyId);
+      const company = await Company.findById(companyId, 'users');
       if (!company) {
         throw new Error('Compañía no encontrada');
       }
@@ -90,7 +89,7 @@ class UserDAO {
   // Actualiza solo los campos dados de un usuario
   async patchUser(companyId, userId, newData) {
     try {
-      const company = await Company.findById(companyId);
+      const company = await Company.findById(companyId, 'users');
       if (!company) {
         throw new Error('Compañía no encontrada');
       }
@@ -117,7 +116,7 @@ class UserDAO {
 
   async deleteUser(companyId, userId) {
     try {
-      const company = await Company.findById(companyId);
+      const company = await Company.findById(companyId, 'users');
       if (!company) {
         throw new Error('Compañía no encontrada');
       }
@@ -154,6 +153,21 @@ class UserDAO {
       const companies = await Company.find({ "users._id": userId });
       const user = companies.flatMap(company => company.users.find(user => user._id.toString() === userId));
       return user;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Get password unhashed from email
+  async getPasswordByEmail(email) {
+    try {
+      const user = await Company.findOne({ "users.email": email }, { "users.$": 1 });
+      if (user) {
+        console.log(user.users[0].password.decrypt());
+        return user.password;
+      } else {
+        throw new Error('Usuario no encontrado');
+      }
     } catch (error) {
       throw error;
     }
