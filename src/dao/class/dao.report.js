@@ -27,7 +27,6 @@ class ReportDAO {
       const objectId = new mongoose.Types.ObjectId(incidentId);
   
       const report = await Report.findOne({ incidentId: objectId });
-      console.log(report,"reporte");
       if (!report) {
         throw new Error('Reporte no encontrado');
       }
