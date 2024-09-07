@@ -7,6 +7,7 @@ const os = require('os');
 const router = Router()
 const ReportDAO = require('../../dao/class/dao.report');
 const Report = new ReportDAO;
+const zip = require('express-zip');
 
 router.post('/llenar-pdf', async (req, res) => {
     const reportData = req.body;
@@ -106,6 +107,30 @@ router.get('/reporte/:incidentId', async (req, res) => {
     console.error(error);
     res.status(500).json({ message: 'Error al obtener los valores del reporte' });
   }
+});
+
+// Download multiple reports as a ZIP file
+router.post('/reportes', async (req, res) => {
+    const pdfFiles = [];
+    const { incidentIds } = req.body;
+    try {
+        for (const incidentId of incidentIds) {
+            const report = await Report.getReportByIncidentId(incidentId);
+            if (report) {
+                const pdfBytes = await llenarYMarcarPDF(report);
+                const tempFilePath = path.join(os.tmpdir(), `formulario_${incidentId}.pdf`);
+                fs.writeFileSync(tempFilePath, pdfBytes);
+                pdfFiles.push({ path: tempFilePath, name: `formulario_${incidentId}.pdf` });
+            }
+        }
+        if (pdfFiles.length === 0) {
+            return res.status(404).json({ message: 'No se encontraron reportes' });
+        }
+        res.zip(pdfFiles, 'reportes.zip');
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error al obtener los reportes' });
+    }
 });
 
 module.exports = router

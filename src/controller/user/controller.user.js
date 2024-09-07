@@ -81,5 +81,16 @@ router.delete('/:companyId/users/:userId', async (req, res) => {
   }
 });
 
+// Recuperar contraseña de un usuario por email
+router.post('/forgot-password', async (req, res) => {
+  const email = req.body.email;
+  try {
+    const message = await User.getPasswordByEmail(email);
+    res.json(message);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 
 module.exports = router;
