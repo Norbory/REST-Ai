@@ -80,6 +80,7 @@ const userSchema = new mongoose.Schema({
 });
 
 const incidentSchema = new mongoose.Schema({
+  number: {type: Number, autoincrement: true},
   ID_area: {type:mongoose.Schema.Types.ObjectId, required: true},
   ID_Cam: {type: mongoose.Schema.Types.ObjectId, required: true},
   areaName: {type: String, required: false},
