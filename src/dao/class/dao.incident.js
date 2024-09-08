@@ -1,5 +1,20 @@
 const {Company} = require('../models/company.model');
+const { Incident } = require('../models/incident.model');
 class IncidentDAO {
+  // Get all incidents
+  // only incidents for an specific company
+  async getAllIncidentsByCompanyId(companyId) {
+    try {
+      const incidents = await Incident.findById(companyId, 'incidents -_id').sort({date: -1});
+      if (!incidents) {
+        throw new Error('Compañía no encontrada');
+      }
+      return incidents;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   // Metodo para obtener lista de incidentes
   async getIncidentsByCompanyId(companyId) {
     try {
