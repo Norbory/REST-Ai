@@ -84,10 +84,7 @@ const incidentSchema = new mongoose.Schema({
   ID_area: {type:mongoose.Schema.Types.ObjectId, required: true},
   ID_Cam: {type: mongoose.Schema.Types.ObjectId, required: true},
   areaName: {type: String, required: false},
-  date: {
-    type: Date,
-    default: () => new Date(new Date().toLocaleString("en-US", { timeZone: "America/Lima" }))
-  },
+  date: {type: Date, required:false},
   imageUrls: [String],
   EPPs: [String],
   Reported: {
@@ -106,10 +103,7 @@ const incidentSchema = new mongoose.Schema({
     }
   ],
   supervisor: {type: String, required: false},
-  ModifyDate: {
-    type: Date,
-    default: () => new Date(new Date().toLocaleString("en-US", { timeZone: "America/Lima" }))
-  },
+  ModifyDate: {type: Date,required: false},
 });
 
 const companySchema = new mongoose.Schema({

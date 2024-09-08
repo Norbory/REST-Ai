@@ -1,7 +1,7 @@
 const { Company } = require('../models/company.model');
-let cache = {};
-let cacheUserCompany = {};
-let cacheUserCompanyEachMonth = {};
+// let cache = {};
+// let cacheUserCompany = {};
+// let cacheUserCompanyEachMonth = {};
 class StatsDAO {
   // Get statistics by company
   async getStatisticsByCompanyId(companyId) {
@@ -17,8 +17,8 @@ class StatsDAO {
         Chaleco: 0,
         Guantes: 0,
         Lentes: 0,
-        Orejeras: 0,
-        Respirador: 0,
+        Celular: 0,
+        Zapatos: 0,
       };
 
       company.incidents.forEach(incident => {
@@ -66,8 +66,8 @@ class StatsDAO {
           Chaleco: 0,
           Guantes: 0,
           Lentes: 0,
-          Orejeras: 0,
-          Respirador: 0,
+          Celular: 0,
+          Zapatos: 0,
           Total: 0
         };
 
@@ -179,8 +179,8 @@ class StatsDAO {
         Chaleco: 0,
         Guantes: 0,
         Lentes: 0,
-        Orejeras: 0,
-        Respirador: 0,
+        Celular: 0,
+        Zapatos: 0,
         Total: 0
       };
   
@@ -269,8 +269,8 @@ class StatsDAO {
           Chaleco: 0,
           Guantes: 0,
           Lentes: 0,
-          Orejeras: 0,
-          Respirador: 0,
+          Celular: 0,
+          Zapatos: 0,
           Total: 0
         };
   

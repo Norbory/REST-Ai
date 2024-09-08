@@ -37,7 +37,7 @@ class IncidentDAO {
         throw new Error('Compañía no encontrada');
       }
       const incidentsDeleted = company.incidents.filter(incident => incident.Deleted);
-      const incidentsSorted = incidentsDeleted.sort((a, b) => new Date(b.date) - new Date(a.date));
+      const incidentsSorted = incidentsDeleted.sort((a, b) => new Date(b.ModifyDate) - new Date(a.ModifyDate));
       return incidentsSorted;
     } catch (error) {
       throw error;
