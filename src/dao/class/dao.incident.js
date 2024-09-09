@@ -1,20 +1,105 @@
-const {Company} = require('../models/company.model');
-const { Incident } = require('../models/incident.model');
+const {Company, Incident} = require('../models/company.model');
 class IncidentDAO {
+  // INCIDENTS MODELS
   // Get all incidents
   // only incidents for an specific company
   async getAllIncidentsByCompanyId(companyId) {
     try {
-      const incidents = await Incident.findById(companyId, 'incidents -_id').sort({date: -1});
-      if (!incidents) {
-        throw new Error('Compañía no encontrada');
+      const incidents = await Incident.find({ID_company: companyId}).sort({date: -1});
+      if (incidents.length === 0) {
+        throw new Error('No se encontraron incidentes');
+      } else if (incidents === null) {
+        throw new Error('No se encontraron incidentes');
+      } else {
+        return incidents;
       }
-      return incidents;
+    } catch (error) {
+      throw error;
+    }
+  }
+  // Get incidents for specific company and deleted incidents
+  async getAllIncidentsDeletedByCompanyId(companyId) {
+    try {
+      const incidents = await Incident.find({ID_company: companyId, Deleted: true}).sort({ModifyDate: -1});
+      if (incidents.length === 0) {
+        throw new Error('No se encontraron incidentes');
+      } else if (incidents === null) {
+        throw new Error('No se encontraron incidentes');
+      } else {
+        return incidents;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+  // Get incidents for specific company and not deleted incidents
+  async getAllIncidentsNotDeletedByCompanyId(companyId) {
+    try {
+      const incidents = await Incident.find({ID_company: companyId, Deleted: false}).sort({date: -1});
+      if (incidents.length === 0) {
+        throw new Error('No se encontraron incidentes');
+      } else if (incidents === null) {
+        throw new Error('No se encontraron incidentes');
+      } else {
+        return incidents;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+  // Get an incident by ID and company ID
+  async getIncidentByIdAndCompanyId(incidentId) {
+    try {
+      const incident = await Incident.findOne({ _id: incidentId});
+      if (incident === null) {
+        throw new Error('Incidente no encontrado');
+      } else {
+        return incident;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+  // Post a new incident by company
+  async addIncidentByCompany(incidentData) {
+    try {
+      const newIncident = new Incident(incidentData);
+      const savedIncident = await newIncident.save();
+      return savedIncident;
+    } catch (error) {
+      throw error;
+    }
+  }
+  // Post several incidents by company
+  async addIncidentsByCompany(incidentsData) {
+    try {
+      const savedIncidents = await Incident.insertMany(incidentsData, {writeConcern: {w: 'majority', wtimeout: 1000}});
+      return savedIncidents;
+    } catch (error) {
+      throw error;
+    }
+  }
+  // Update an incident by company
+  async updateIncidentByCompany(incidentId, newData) {
+    try {
+      await Incident.updateOne({_id: incidentId}, {$set: newData}, {writeConcern: {w: 'majority', wtimeout: 1000}});
+      return;
+    } catch (error) {
+      throw error;
+    }
+  }
+  // Delete an incident by company
+  async deleteIncidentByCompany(incidentId) {
+    try {
+      await Incident.deleteOne({_id: incidentId}, {writeConcern: {w: 'majority', wtimeout: 1000}});
+      return;
     } catch (error) {
       throw error;
     }
   }
 
+  
+  // COMPANY MODELS
   // Metodo para obtener lista de incidentes
   async getIncidentsByCompanyId(companyId) {
     try {
@@ -28,22 +113,20 @@ class IncidentDAO {
       throw error;
     }
   }
-
   // Metodo para obtener lista de incidentes Not Deleted
-  async getIncidentsNotDeletedByCompanyId(companyId) {
-    try {
-      const company = await Company.findById(companyId, 'incidents -_id');
-      if (!company) {
-        throw new Error('Compañía no encontrada');
-      }
-      const incidentsNotDeleted = company.incidents.filter(incident => !incident.Deleted);
-      const incidentsSorted = incidentsNotDeleted.sort((a, b) => new Date(b.date) - new Date(a.date));
-      return incidentsSorted;
-    } catch (error) {
-      throw error;
-    }
-  }
-
+  // async getIncidentsNotDeletedByCompanyId(companyId) {
+  //   try {
+  //     const company = await Company.findById(companyId, 'incidents -_id');
+  //     if (!company) {
+  //       throw new Error('Compañía no encontrada');
+  //     }
+  //     const incidentsNotDeleted = company.incidents.filter(incident => !incident.Deleted);
+  //     const incidentsSorted = incidentsNotDeleted.sort((a, b) => new Date(b.date) - new Date(a.date));
+  //     return incidentsSorted;
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
   // Metodo para obtener lista de incidentes Deleted
   async getIncidentsDeletedByCompanyId(companyId) {
     try {
@@ -58,7 +141,6 @@ class IncidentDAO {
       throw error;
     }
   }
-
   // Metodo para obtener un incidente por ID
   async getIncidentById(companyId, incidentId) {
     try {
@@ -76,9 +158,8 @@ class IncidentDAO {
       throw error;
     }
   }
-
   // Metodo para añadir un incidente
-  async addIncident(companyId, incidentData) {
+  async aByCompanyddIncident(companyId, incidentData) {
     try {
       const company = await Company.findById(companyId, 'incidents');
       company.incidents.push(incidentData);
@@ -88,7 +169,6 @@ class IncidentDAO {
       throw error;
     }
   }
-
   // Metodo para actualizar un incidente
   async updateIncident(companyId, incidentId, newData) {
     try {
@@ -221,8 +301,5 @@ class IncidentDAO {
     }
   }
 }
-
-
-
 
 module.exports = IncidentDAO;

@@ -6,25 +6,31 @@ const fs = require('fs');
 const os = require('os');
 const router = Router()
 const ReportDAO = require('../../dao/class/dao.report');
+const IncidentDAO = require('../../dao/class/dao.incident');
+const Incident = new IncidentDAO;
 const Report = new ReportDAO;
-const zip = require('express-zip');
 
+// Fill and mark a PDF with the data from the request body
 router.post('/llenar-pdf', async (req, res) => {
     const reportData = req.body;
-    const {incidentId} = req.body;
-    //comentario
+    const incidentId = reportData.incidentId;
+    if (!reportData) {
+        return res.status(500).json({ message: 'Datos del reporte no encontrados' });
+    }
     try {
+        const incident = await Incident.getIncidentByIdAndCompanyId(incidentId);
+        if (!incident) {
+            return res.status(404).json({ message: 'Incidente no encontrado' });
+        }
         // Llama a la función para llenar y marcar el PDFs
         const pdfBytes = await llenarYMarcarPDF(reportData);
         // Guarda el PDF generado como reporte
-        await Report.subirReporte(incidentId, reportData);
+        const newReport = await Report.subirReporte(reportData);
+        if (!newReport) {
+            return res.status(500).json({ message: 'Error al guardar el reporte' });
+        }
         // Envía el PDF generado como respuesta
-
-        // const pdfPath = path.join(__dirname, '../../utils/formulario_lleno.pdf');
-        // res.setHeader('Content-Type', 'application/pdf');
-        // res.setHeader('Content-Disposition', 'attachment; filename=formulario_lleno.pdf');
-        // Envía el PDF generado como respuesta
-        const tempFilePath = path.join(os.tmpdir(), `formulario_${incidentId}.pdf`);
+        const tempFilePath = path.join(os.tmpdir(), `formulario_${incident.numberId}.pdf`);
         fs.writeFileSync(tempFilePath, pdfBytes);
         res.setHeader('Content-Type', 'application/pdf');
         res.sendFile(tempFilePath, () => {
@@ -35,15 +41,14 @@ router.post('/llenar-pdf', async (req, res) => {
                 }
             });
         });
-
+        res.status(201).json({ message: 'Reporte guardado' });
     } catch (error) {
         console.error(error);
-        res.status(500).send('Error al generar el PDF');
+        res.status(500).send({message:'Error al generar reporte'});
     }
 });
 
-
-//Get report by ID, create a PDF and send it to the user
+// Get report by ID, create a PDF and send it to the user
 router.get('/report/:incidentId', async (req, res) => {
     const incidentId = req.params.incidentId;
     try {
@@ -59,9 +64,6 @@ router.get('/report/:incidentId', async (req, res) => {
             throw new Error('Los datos generados no son un PDF válido');
         }
         // Envía el PDF generado como respuesta
-        // const pdfPath = path.join(__dirname, '../../utils/formulario_lleno.pdf');
-        // res.setHeader('Content-Type', 'application/pdf');
-        // res.setHeader('Content-Disposition', 'attachment; filename=formulario_lleno.pdf');
         const tempFilePath = path.join(os.tmpdir(), `formulario_${incidentId}.pdf`);
         fs.writeFileSync(tempFilePath, pdfBytes);
         res.setHeader('Content-Type', 'application/pdf');
@@ -73,7 +75,6 @@ router.get('/report/:incidentId', async (req, res) => {
                 }
             });
         });
-
         //res.download(pdfBytes);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -88,7 +89,7 @@ router.get('/reporte-generado/last', async (req, res) => {
     res.download(pdfPath);
 });
 
-// Define el endpoint para obtener los valores del reporte por incidentId
+// Get report by incidentId (values only)
 router.get('/reporte/:incidentId', async (req, res) => {
   try {
     const incidentId = req.params.incidentId;

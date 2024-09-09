@@ -20,8 +20,33 @@ const machineSchema = new mongoose.Schema({
   },
 });
 
+const incidentSchema = new mongoose.Schema({
+  numberId: {type: Number},
+  ID_company: {type:mongoose.Schema.Types.ObjectId, required: true},
+  ID_area: {type:mongoose.Schema.Types.ObjectId, required: true},
+  ID_Cam: {type: mongoose.Schema.Types.ObjectId, required: true},
+  areaName: {type: String, required: false},
+  companyName: {type: String, required: false},
+  date: {type: Date, required:false},
+  imageUrls: [String],
+  EPPs: [String],
+  Reported: {
+    type: Boolean,
+    default: false
+  },
+  Deleted: {
+    type: Boolean,
+    default: false
+  },
+  supervisor: {type: String, required: false},
+  ModifyDate: {type: Date,required: false},
+});
+
 const reportSchema = new mongoose.Schema({
-  incidentId: {type:mongoose.Schema.Types.ObjectId, required: false},
+  incidentId: {
+    type:mongoose.Schema.Types.ObjectId, 
+    ref: 'Incident'
+  },
   Nombre: {type: String, required: false},
   DNI: {type: String, required: false},
   Cargo: {type: String, required: false},
@@ -78,36 +103,10 @@ const userSchema = new mongoose.Schema({
   email: {type:String, required: false, unique: true},
   DNI: {type:String, required: false, unique: true},
   numContact: {type:String, required: false, unique: true},
-  osInfo: {type:JSON, required: false},
+  osInfo: {type:JSON, required: false, default: {
+    os: '',
+  }},
   token: {type: String, required: false},
-});
-
-const incidentSchema = new mongoose.Schema({
-  numberId: {type: Number},
-  ID_company: {type:mongoose.Schema.Types.ObjectId, required: true},
-  ID_area: {type:mongoose.Schema.Types.ObjectId, required: true},
-  ID_Cam: {type: mongoose.Schema.Types.ObjectId, required: true},
-  areaName: {type: String, required: false},
-  companyName: {type: String, required: false},
-  date: {type: Date, required:false},
-  imageUrls: [String],
-  EPPs: [String],
-  Reported: {
-    type: Boolean,
-    default: false
-  },
-  Deleted: {
-    type: Boolean,
-    default: false
-  },
-  reportes: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Report'
-    }
-  ],
-  supervisor: {type: String, required: false},
-  ModifyDate: {type: Date,required: false},
 });
 
 incidentSchema.plugin(AutoIncrement, {inc_field: 'numberId'});
@@ -168,13 +167,13 @@ incidentSchema.pre('save', async function(next) {
 incidentSchema.pre('save', async function(next) {
   try {
     const company = await mongoose.model('Company').findOne({
-      'company._id': this.ID_company
+      '_id': this.ID_company
     }, {
-      'company.$': 1
+      'Name': 1
     });
 
     if (company) {
-      this.companyName = company.company[0].Name;
+      this.companyName = company.Name;
     }
 
     next();
@@ -184,11 +183,11 @@ incidentSchema.pre('save', async function(next) {
 });
 
 const Company = mongoose.model('Company', companySchema);
-const Report = mongoose.model('Report', reportSchema);
 const Incident = mongoose.model('Incident', incidentSchema);
+const Report = mongoose.model('Report', reportSchema);
 
 module.exports = {
   Company,
+  Incident,
   Report,
-  Incident
 };

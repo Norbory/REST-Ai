@@ -1,34 +1,26 @@
-const { Company } = require('../models/company.model');
+const { Company, Incident } = require('../models/company.model');
 // let cache = {};
 // let cacheUserCompany = {};
 // let cacheUserCompanyEachMonth = {};
 class StatsDAO {
   // Get statistics by company
   async getStatisticsByCompanyId(companyId) {
-
+    let Cuentas = {
+      Casco: 0,
+      Chaleco: 0,
+      Guantes: 0,
+      Lentes: 0,
+      Celular: 0,
+      Zapatos: 0,
+    };
     try {
-      const company = await Company.findById(companyId, 'incidents -_id');
-      if (!company) {
-        throw new Error('Compañía no encontrada');
-      }
+      Cuentas.Casco = await Incident.count({ ID_company: companyId, EPPs: 'Casco' });
+      Cuentas.Chaleco = await Incident.count({ ID_company: companyId, EPPs: 'Chaleco' });
+      Cuentas.Guantes = await Incident.count({ ID_company: companyId, EPPs: 'Guantes' });
+      Cuentas.Lentes = await Incident.count({ ID_company: companyId, EPPs: 'Lentes' });
+      Cuentas.Celular = await Incident.count({ ID_company: companyId, EPPs: 'Celular' });
+      Cuentas.Zapatos = await Incident.count({ ID_company: companyId, EPPs: 'Zapatos' });
 
-      let Cuentas = {
-        Casco: 0,
-        Chaleco: 0,
-        Guantes: 0,
-        Lentes: 0,
-        Celular: 0,
-        Zapatos: 0,
-      };
-
-      company.incidents.forEach(incident => {
-        incident.EPPs.forEach(epp => {
-          if (Cuentas.hasOwnProperty(epp)) {
-            Cuentas[epp]++;
-          }
-        });
-      });
-      
       return Cuentas;
     } catch (error) {
       throw error;
@@ -38,16 +30,14 @@ class StatsDAO {
   // Get statistics by company sorted by month
   async getStatisticsByCompanyIdEachMonth(companyId) {
     try {
-      const company = await Company.findById(companyId);
-      if (!company) {
-        throw new Error('Compañía no encontrada');
-      }
-
       let Cuentas = {
         Mes: [],
       };
+      // Count number of incidents by each month of the current year
+      const incidentsByYear = await Incident.find({ ID_company: companyId, date: { $gte: new Date(new Date().getFullYear(), 0, 1), $lt: new Date(new Date().getFullYear() + 1, 0, 1) } });
 
-      const incidentsByYear = company.incidents.filter(incident => incident.date.getFullYear() === new Date().getFullYear());
+      // Meses del año
+      const MESES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
       const incidentsByMonth = incidentsByYear.reduce((acc, incident) => {
         const month = incident.date.getMonth();
@@ -102,17 +92,12 @@ class StatsDAO {
   // 1-5, 6-10, 11-15, 16-20, 21-25, 26-End
   async getIncidentsByIntervals(companyId) {
     try {
-      const company = await Company.findById(companyId, 'incidents -_id');
-      if (!company) {
-        throw new Error('Compañía no encontrada');
-      }
-
       let Cuentas = {
         Mes: [],
       };
 
-      const incidentsByYear = company.incidents.filter(incident => incident.date.getFullYear() === new Date().getFullYear());
-
+      const incidentsByYear = await Incident.find({ ID_company: companyId, date: { $gte: new Date(new Date().getFullYear(), 0, 1), $lt: new Date(new Date().getFullYear() + 1, 0, 1) } });
+      
       const incidentsByMonth = incidentsByYear.reduce((acc, incident) => {
         const month = incident.date.getMonth();
         acc[month] = acc[month] || [];
@@ -162,11 +147,8 @@ class StatsDAO {
   // Get statistics by user's company (for Supervisor)
   async getStatisticsByUserCompany(companyId, userId) {
     try {
-      const company = await Company.findById(companyId, 'incidents users -_id');
-      if (!company) {
-        throw new Error('Compañía no encontrada');
-      }
-      const user = company.users.id(userId, 'name -_id');
+      const users = await Company.findById(companyId, 'users -_id');
+      const user = users.users.id(userId);
       if (!user) {
         throw new Error('Usuario no encontrado');
       }
@@ -183,22 +165,18 @@ class StatsDAO {
         Zapatos: 0,
         Total: 0
       };
-  
-      const incidentesWithSupervisor = company.incidents.filter(incident => incident.supervisor === user.name);
-      Cuentas.Total = incidentesWithSupervisor.length;
-      const incidentesEliminados = incidentesWithSupervisor.filter(incident => incident.Deleted);
-      Cuentas.Registrados = Cuentas.Total - incidentesEliminados.length;
-      const incidentesAmonestados = incidentesEliminados.filter(incident => incident.Reported);
-      Cuentas.Amonestados = incidentesAmonestados.length;
-      Cuentas.Descartados = incidentesEliminados.length - incidentesAmonestados.length;
-  
-      incidentesAmonestados.forEach(incident => {
-        incident.EPPs.forEach(epp => {
-          if (Cuentas.hasOwnProperty(epp)) {
-            Cuentas[epp]++;
-          }
-        });
-      });
+
+      Cuentas.Total = await Incident.find({ ID_company: companyId, supervisor: user.name }).count();
+      Cuentas.Registrados = await Incident.find({ ID_company: companyId, supervisor: user.name, Deleted: false }).count();
+      Cuentas.Descartados = await Incident.find({ ID_company: companyId, supervisor: user.name, Deleted: true, Reported: false }).count();
+      Cuentas.Amonestados = await Incident.find({ ID_company: companyId, supervisor: user.name, Deleted: true, Reported: true }).count();
+      Cuentas.Casco = await Incident.find({ ID_company: companyId, supervisor: user.name, EPPs: 'Casco' }).count();
+      Cuentas.Chaleco = await Incident.find({ ID_company: companyId, supervisor: user.name, EPPs: 'Chaleco' }).count();
+      Cuentas.Guantes = await Incident.find({ ID_company: companyId, supervisor: user.name, EPPs: 'Guantes' }).count();
+      Cuentas.Lentes = await Incident.find({ ID_company: companyId, supervisor: user.name, EPPs: 'Lentes' }).count();
+      Cuentas.Celular = await Incident.find({ ID_company: companyId, supervisor: user.name, EPPs: 'Celular' }).count();
+      Cuentas.Zapatos = await Incident.find({ ID_company: companyId, supervisor: user.name, EPPs: 'Zapatos' }).count();
+
       return Cuentas;
     } catch (error) {
       throw error;
@@ -208,11 +186,11 @@ class StatsDAO {
   // Get statistics by all areas by each month
   async getStatisticsByAreasEachMonth(companyId) {
     try {
-      const company = await Company.findById(companyId, 'incidents areas -_id');
+      const company = await Company.findById(companyId, 'areas -_id');
       if (!company) {
         throw new Error('Compañía no encontrada');
       }
-      const incidentsByYear = company.incidents.filter(incident => incident.date.getFullYear() === new Date().getFullYear());
+      const incidentsByYear = await Incident.find({ ID_company: companyId, date: { $gte: new Date(new Date().getFullYear(), 0, 1), $lt: new Date(new Date().getFullYear() + 1, 0, 1) } });
       const areas = company.areas;
       
       let Cuentas = {};
@@ -235,11 +213,8 @@ class StatsDAO {
   async getStatisticsByUserCompanyEachMonth (companyId, userId) {
     
     try {
-      const company = await Company.findById(companyId);
-      if (!company) {
-        throw new Error('Compañía no encontrada');
-      }
-      const user = company.users.id(userId);
+      const users = await Company.findById(companyId, 'users');
+      const user = users.users.id(userId);
       if (!user) {
         throw new Error('Usuario no encontrado');
       }
@@ -248,11 +223,10 @@ class StatsDAO {
         Nombre: user.name,
         Mes: [],
       };
+
+      const incidentsCurrentYearWithSupervisor = await Incident.find({ ID_company: companyId, supervisor: user.name, date: { $gte: new Date(new Date().getFullYear(), 0, 1), $lt: new Date(new Date().getFullYear() + 1, 0, 1) } });
   
-      const incidentesWithSupervisor = company.incidents.filter(incident => incident.supervisor === user.name);
-      const incidentsByCurrentYear = incidentesWithSupervisor.filter(incident => incident.date.getFullYear() === new Date().getFullYear());
-  
-      const incidentsByMonth = incidentsByCurrentYear.reduce((acc, incident) => {
+      const incidentsByMonth = incidentsCurrentYearWithSupervisor.reduce((acc, incident) => {
         const month = incident.date.getMonth();
         acc[month] = acc[month] || [];
         acc[month].push(incident);
