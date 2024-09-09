@@ -9,6 +9,7 @@ const ReportDAO = require('../../dao/class/dao.report');
 const IncidentDAO = require('../../dao/class/dao.incident');
 const Incident = new IncidentDAO;
 const Report = new ReportDAO;
+const zip = require('express-zip');
 
 // Fill and mark a PDF with the data from the request body
 router.post('/llenar-pdf', async (req, res) => {
@@ -117,11 +118,12 @@ router.post('/reportes', async (req, res) => {
     try {
         for (const incidentId of incidentIds) {
             const report = await Report.getReportByIncidentId(incidentId);
+            const incident = await Incident.getIncidentByIdAndCompanyId(incidentId);
             if (report) {
                 const pdfBytes = await llenarYMarcarPDF(report);
-                const tempFilePath = path.join(os.tmpdir(), `formulario_${incidentId}.pdf`);
+                const tempFilePath = path.join(os.tmpdir(), `formulario_${incident.numberId}.pdf`);
                 fs.writeFileSync(tempFilePath, pdfBytes);
-                pdfFiles.push({ path: tempFilePath, name: `formulario_${incidentId}.pdf` });
+                pdfFiles.push({ path: tempFilePath, name: `formulario_${incident.numberId}.pdf` });
             }
         }
         if (pdfFiles.length === 0) {
@@ -130,7 +132,7 @@ router.post('/reportes', async (req, res) => {
         res.zip(pdfFiles, 'reportes.zip');
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Error al obtener los reportes' });
+        res.status(500).json({ message: 'Error al obtener los reportes' + error.message });
     }
 });
 
