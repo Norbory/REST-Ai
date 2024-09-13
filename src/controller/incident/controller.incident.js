@@ -15,6 +15,16 @@ cloudinary.config({
   api_secret: 'yBoghdZkYzBETXFy5Dlt9VgWnP8',
 });
 
+// Number of incidents by company
+router.get('/:companyId/incidents/number', async (req, res) => {
+  const companyId = req.params.companyId;
+  try {
+    const number = await Incident.numberIncidentsByCompanyId(companyId);
+    res.status(200).json(number);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 // Get all incidents by company
 router.get('/:companyId/incidents', async (req, res) => {
   const companyId = req.params.companyId;
@@ -27,11 +37,32 @@ router.get('/:companyId/incidents', async (req, res) => {
   }
 });
 // Get all not deleted incidents by company
-router.get('/:companyId/incidents/notdeleted', async (req, res) => {
+router.post('/:companyId/incidents/notdeleted', async (req, res) => {
+  const companyId = req.params.companyId;
+  const { limit, offset } = req.body;
+  try {
+    const incidents = await Incident.getAllIncidentsNotDeletedByCompanyId(companyId, limit, offset);
+    res.status(200).json(incidents);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+// Get the last 4 incidents by company
+router.get('/:companyId/incidents/last', async (req, res) => {
   const companyId = req.params.companyId;
   try {
-    const incidents = await Incident.getAllIncidentsNotDeletedByCompanyId(companyId);
-    //const incidents = await Incident.getIncidentsNotDeletedByCompanyId(companyId);
+    const incidents = await Incident.getLastIncidentsByCompanyId(companyId);
+    res.status(200).json(incidents);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+// Get deleted incidents by company but limit
+router.post('/:companyId/incidents/deleted/limit', async (req, res) => {
+  const companyId = req.params.companyId;
+  const { limit, offset } = req.body;
+  try {
+    const incidents = await Incident.getIncidentsDeletedByCompanyId(companyId, limit, offset);
     res.status(200).json(incidents);
   } catch (error) {
     res.status(500).json({ message: error.message });

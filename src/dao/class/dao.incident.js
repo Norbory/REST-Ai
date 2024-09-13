@@ -1,11 +1,41 @@
 const {Company, Incident} = require('../models/company.model');
 class IncidentDAO {
   // INCIDENTS MODELS
+  // Number of incidents by company
+  async numberIncidentsByCompanyId(companyId) {
+    try {
+      const numberIncidents = await Incident.find({ID_company: companyId}).count();
+      const numberIncidentsDeleted = await Incident.find({ID_company: companyId, Deleted: true}).count();
+      const numberIncidentsNotDeleted = numberIncidents - numberIncidentsDeleted;
+      return {
+        numberIncidents,
+        numberIncidentsDeleted,
+        numberIncidentsNotDeleted
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
   // Get all incidents
   // only incidents for an specific company
   async getAllIncidentsByCompanyId(companyId) {
     try {
       const incidents = await Incident.find({ID_company: companyId}).sort({date: -1});
+      if (incidents.length === 0) {
+        throw new Error('No se encontraron incidentes');
+      } else if (incidents === null) {
+        throw new Error('No se encontraron incidentes');
+      } else {
+        return incidents;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+  // Get last 4 incidents for specific company
+  async getLastIncidentsByCompanyId(companyId) {
+    try {
+      const incidents = await Incident.find({ID_company: companyId}).sort({date: -1}).limit(4);
       if (incidents.length === 0) {
         throw new Error('No se encontraron incidentes');
       } else if (incidents === null) {
@@ -32,10 +62,25 @@ class IncidentDAO {
       throw error;
     }
   }
-  // Get incidents for specific company and not deleted incidents
-  async getAllIncidentsNotDeletedByCompanyId(companyId) {
+  // Get incidents for specific company and deleted incidents but limit and offset
+  async getAllIncidentsDeletedByCompanyIdLimitOffset(companyId, limit, offset) {
     try {
-      const incidents = await Incident.find({ID_company: companyId, Deleted: false}).sort({date: -1});
+      const incidents = await Incident.find({ID_company: companyId, Deleted: true}).sort({ModifyDate: -1}).limit(limit).skip(limit*offset);
+      if (incidents.length === 0) {
+        throw new Error('No se encontraron incidentes');
+      } else if (incidents === null) {
+        throw new Error('No se encontraron incidentes');
+      } else {
+        return incidents;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+  // Get incidents for specific company and not deleted incidents
+  async getAllIncidentsNotDeletedByCompanyId(companyId, limit, offset) {
+    try {
+      const incidents = await Incident.find({ID_company: companyId, Deleted: false}).sort({date: -1}).limit(limit).skip(limit*offset);
       if (incidents.length === 0) {
         throw new Error('No se encontraron incidentes');
       } else if (incidents === null) {
