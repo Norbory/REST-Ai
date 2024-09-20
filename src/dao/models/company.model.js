@@ -140,6 +140,23 @@ const companySchema = new mongoose.Schema({
     type: [machineSchema],
     default: []
   },
+  InfoCompany: {
+    type: JSON,
+    default: {
+      RUC: '',
+      Direccion: '',
+      GoogleMaps: '',
+      Telefono: '',
+      Representante: '',
+      Contacto: '',
+      Email: '',
+      Logo: '',
+      Background: '',
+      Color: '',
+      ColorText: '',
+      Ubigeo: ''
+    }
+  },
   date: {
     type: Date,
     default: () => new Date(new Date().toLocaleString("en-US", { timeZone: "America/Lima" }))
