@@ -10,7 +10,7 @@ router.post('/:companyId/mensaje', async (req, res) => {
 
     try {
         const response = await Mqtt.sendAndReceive(topic, JSON.stringify(message)); 
-        res.status(200).json({ topic, receivedMessage: response }); 
+        res.status(200).json({ topic, receivedMessage: response, dia: new Date().toLocaleDateString('es-Pe') }); 
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
